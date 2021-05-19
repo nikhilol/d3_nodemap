@@ -2,12 +2,14 @@
   "name": "d3_nodemap",
   "version": "0.1.0",
   "private": true,
+  "homepage": "https://nikhilol.github.io/d3_nodemap",
   "dependencies": {
     "@testing-library/jest-dom": "^5.12.0",
     "@testing-library/react": "^11.2.6",
     "@testing-library/user-event": "^12.8.3",
     "axios": "^0.21.1",
     "d3": "5.5",
+    "gh-pages": "^3.1.0",
     "markdown-it": "^12.0.6",
     "marked": "^2.0.3",
     "react": "^17.0.2",
@@ -20,6 +22,8 @@
     "web-vitals": "^1.1.2"
   },
   "scripts": {
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build",
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
