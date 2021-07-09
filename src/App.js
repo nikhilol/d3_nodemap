@@ -1,8 +1,8 @@
 import logo from './logo.svg';
 import { Graph } from 'react-d3-graph'
-import React, { useState, useEffect, useMemo } from 'react'
-import { Button } from '@material-ui/core'
+import React, { useState, useEffect } from 'react'
 import './App.css';
+import PlanSelector from './PlanSelector'
 
 import 'react-markdown-editor-lite/lib/index.css';
 import Editor from "rich-markdown-editor"
@@ -75,18 +75,29 @@ const myConfig = {
   }
 }
 
-function App() {
+const userID = 'Nodemap';
+
+function App(props) {
 
   const [data, setData] = useState({})
+  const [plans, setPlans] = useState([])
   const [activeNode, setActiveNode] = useState(null)
   const [mdValue, setMdValue] = useState([])
 
   function getData() {
-    return axios.get(`https://us-central1-nodemap-app.cloudfunctions.net/api/plan/nodes?username=Demo&plan_id=Test plan`).then(_d => _d.data)
+    return axios.get(`https://us-central1-nodemap-app.cloudfunctions.net/api/plan/nodes?username=${props.userID}&plan_id=${props.plan}`).then(_d => _d.data)
+  }
+
+  function getPlans() {
+    return axios.get(`http://localhost:5001/nodemap-app/us-central1/api/plans?user=${userID}`).then(_d => _d.data)
   }
 
   useEffect(() => {
     let mounted = true;
+    getPlans().then(plans => {
+      console.log(plans)
+      setPlans(plans)
+    })
     getData()
       .then(data => {
         console.log(data)
@@ -119,7 +130,7 @@ function App() {
         }
       })
     return () => mounted = false;
-  }, [])
+  }, [props])
 
   async function configureLinks() {
     let temp = data;
@@ -172,7 +183,9 @@ function App() {
 
   return (
     <>
-      <nav style={{ height: '5vh', background: '#2b2b2b' }}></nav>
+      <nav style={{ height: '5vh', background: '#2b2b2b', display: 'flex', justifyContent: 'center', alignItems:'center' }}>
+        <PlanSelector plans={plans} plan={props.plan} userID={userID}></PlanSelector>
+      </nav>
       <div style={{ display: 'flex', height: 'auto', background: '#F7F6F2' }} className="App">
         {data &&
           <>
@@ -193,11 +206,11 @@ function App() {
                 onNodePositionChange={onNodePositionChange}
                 onMouseOverNode={onDblClickNode}
               />
-              <Button>TEST</Button>
             </div>
           </>
         }
       </div >
+      
     </>
   );
 }
