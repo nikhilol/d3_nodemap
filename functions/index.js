@@ -1,3 +1,4 @@
+/* eslint-disable linebreak-style */
 /* eslint-disable max-len */
 /* eslint-disable indent */
 const functions = require("firebase-functions");
@@ -42,8 +43,23 @@ app.get("/plans", async (req, res) => {
     });
 });
 
-app.get("/", async (req, res) =>{
-    res.send("YUP");
+app.get("/plans/nodes", async (req, res) => {
+    const {user, title} = req.query;
+    await firebase.firestore().collection("Users").doc(user).collection("Plans").doc(title).get().then((doc)=>{
+        if (doc.data()) {
+            res.send(doc.data());
+        } else {
+            res.sendStatus(404);
+        }
+    });
+});
+
+app.post("/plans/update", async (req, res)=>{
+    const {user, title} = req.query;
+    await firebase.firestore().collection("Users").doc(user).collection("Plans").doc(title).set({
+        nodes: req.body,
+    });
+    res.send(200);
 });
 
 app.post("/plans", async (req, res)=>{
@@ -54,5 +70,6 @@ app.post("/plans", async (req, res)=>{
     });
     res.send(200);
 });
+
 
 exports.api = functions.https.onRequest(app);

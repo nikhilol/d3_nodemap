@@ -85,13 +85,31 @@ function App(props) {
   const [mdValue, setMdValue] = useState([])
 
   function getData() {
-    return axios.get(`https://us-central1-nodemap-app.cloudfunctions.net/api/plan/nodes?username=${props.userID}&plan_id=${props.plan}`).then(_d => _d.data)
+    return axios.get(`http://localhost:5001/nodemap-app/us-central1/api/plans/nodes?user=${props.userID}&title=${props.plan}`).then(_d => _d.data)
   }
 
   function getPlans() {
     return axios.get(`http://localhost:5001/nodemap-app/us-central1/api/plans?user=${userID}`).then(_d => _d.data)
   }
 
+  //save
+  useEffect(() => {
+    if(data.nodes.length){
+      Save();
+    }
+  }, [data])
+
+  //markdown timeout
+  useEffect(() => {
+    const delayDebounceFn = setTimeout(() => {
+      console.log(mdValue)
+      Save();
+    }, 2000)
+
+    return () => clearTimeout(delayDebounceFn)
+  }, [mdValue])
+
+  //get plans
   useEffect(() => {
     let mounted = true;
     getPlans().then(plans => {
@@ -101,36 +119,48 @@ function App(props) {
     getData()
       .then(data => {
         console.log(data)
-        let links = []
-        for (var key in data) {
+        // let links = []
+        // for (var key in data) {
 
-          console.log(key)
+        //   console.log(key)
 
-          data[key].id = data[key].ID;
-          delete data[key].ID;
+        //   data[key].id = data[key].ID;
+        //   delete data[key].ID;
 
-          data[key].x = data[key].x ? data[key].x : window.innerWidth * 0.3;
-          data[key].y = data[key].y ? data[key].y : window.innerHeight * 0.1 + parseInt(key) * 150
+        //   data[key].x = data[key].x ? data[key].x : window.innerWidth * 0.3;
+        //   data[key].y = data[key].y ? data[key].y : window.innerHeight * 0.1 + parseInt(key) * 150
 
-          data[key].svg = `/Logos/${data[key].Platform}`
-          if (!data[key].md) {
-            data[key].md = `### ${data[key].Platform} ### \n # ${data[key].Title} # \n --- `
-          } else {
+        //   data[key].svg = `/Logos/${data[key].Platform}`
+        //   if (!data[key].md) {
+        //     data[key].md = `### ${data[key].Platform} ### \n # ${data[key].Title} # \n --- `
+        //   } else {
 
-          }
-          if (key > 0) {
-            links.push({ source: data[key - 1].id, target: data[key].id, color: data[key].IsComplete ? '#72EFDD' : '#D2D2D2' })
-          }
+        //   }
+        //   if (key > 0) {
+        //     links.push({ source: data[key - 1].id, target: data[key].id, color: data[key].IsComplete ? '#72EFDD' : '#D2D2D2' })
+        //   }
 
-        }
-        console.log(data)
+        // }
+        // console.log(data)
         if (mounted) {
-          console.log({ nodes: data })
-          setData({ nodes: data, links: links })
+          setData(data.nodes)
         }
       })
     return () => mounted = false;
   }, [props])
+
+
+  function Save(){
+    console.log('RUNNING SAVE FUNCTION')
+    axios({
+      method: 'post',
+      url: `http://localhost:5001/nodemap-app/us-central1/api/plans/update?user=${props.userID}&title=${props.plan}`,
+      data: data
+    }).then(res=>{
+      console.log(res.data);
+      console.log('THAT WAS THE SAVE FUNCTION')
+    });
+  }
 
   async function configureLinks() {
     let temp = data;
@@ -151,11 +181,10 @@ function App(props) {
 
   function handleEditorChange(getText) {
     const newValue = getText();
-    console.log(newValue);
-    // setMdValue(newValue);
+    setMdValue(newValue)
     if (activeNode) {
       updateNodeData(activeNode ? activeNode.id : null, 'md', newValue)
-      activeNode.md = newValue
+      // activeNode.md = newValue
     }
   }
 
