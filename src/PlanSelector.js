@@ -20,9 +20,9 @@ function PlanSelector(props) {
                     {
                         props.plans.map(plan => {
                             return (
-                                <Link style={{ width: '100%', height: '100%' }} to={`/plan/${props.userID}/${encodeURI(plan.Title)}`}>
-                                    <MenuItem value={plan.Title}>
-                                        {plan.Title}
+                                <Link style={{ width: '100%', height: '100%' }} to={`/plan/${props.userID}/${encodeURI(plan)}`}>
+                                    <MenuItem value={plan}>
+                                        {plan}
                                     </MenuItem>
                                 </Link>
 

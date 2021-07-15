@@ -1,3 +1,4 @@
+/* eslint-disable object-curly-spacing */
 /* eslint-disable linebreak-style */
 /* eslint-disable max-len */
 /* eslint-disable indent */
@@ -5,7 +6,6 @@ const functions = require("firebase-functions");
 const express = require("express");
 const cors = require("cors");
 const firebase = require("firebase-admin");
-const fbase = require("firebase").default;
 
 firebase.initializeApp({
     apiKey: "AIzaSyCUzsoeXiMaMNekQnH-nK8pZkvcmfttVSI",
@@ -15,7 +15,7 @@ firebase.initializeApp({
     messagingSenderId: "1066002610989",
     appId: "1:1066002610989:web:6136fbcaf16554fb4031a4",
     measurementId: "G-6NN3D93WVH",
-  });
+});
 
 // // Create and Deploy Your First Cloud Functions
 // // https://firebase.google.com/docs/functions/write-firebase-functions
@@ -29,12 +29,12 @@ const app = express();
 app.use(cors());
 
 app.get("/plans", async (req, res) => {
-    const {user} = req.query;
-    await firebase.firestore().collection("Users").doc(user).collection("Plans").get().then((snapshot)=>{
+    const { user } = req.query;
+    await firebase.firestore().collection("Users").doc(user).collection("Plans").get().then((snapshot) => {
         if (!snapshot.empty) {
             const data = [];
-            snapshot.forEach((doc)=>{
-                data.push(doc.data());
+            snapshot.forEach((doc) => {
+                data.push(doc.id);
             });
             res.send(data);
         } else {
@@ -44,8 +44,8 @@ app.get("/plans", async (req, res) => {
 });
 
 app.get("/plans/nodes", async (req, res) => {
-    const {user, title} = req.query;
-    await firebase.firestore().collection("Users").doc(user).collection("Plans").doc(title).get().then((doc)=>{
+    const { user, title } = req.query;
+    await firebase.firestore().collection("Users").doc(user).collection("Plans").doc(title).get().then((doc) => {
         if (doc.data()) {
             res.send(doc.data());
         } else {
@@ -54,16 +54,20 @@ app.get("/plans/nodes", async (req, res) => {
     });
 });
 
-app.post("/plans/update", async (req, res)=>{
-    const {user, title} = req.query;
-    await firebase.firestore().collection("Users").doc(user).collection("Plans").doc(title).set({
-        nodes: req.body,
-    });
-    res.send(200);
+app.post("/plans/update", async (req, res) => {
+    const { user, title } = req.query;
+    if (req.body.nodes.length) {
+        await firebase.firestore().collection("Users").doc(user).collection("Plans").doc(title).set({
+            nodes: req.body,
+        });
+        res.send(200);
+    } else {
+        res.send(500);
+    }
 });
 
-app.post("/plans", async (req, res)=>{
-    const {user, title} = req.query;
+app.post("/plans", async (req, res) => {
+    const { user, title } = req.query;
     await firebase.firestore().collection("Users").doc(user).collection("Plans").doc(title).set({
         Title: title,
         TimeCreated: Date.now(),

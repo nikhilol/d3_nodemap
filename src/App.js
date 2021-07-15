@@ -1,15 +1,19 @@
-import logo from './logo.svg';
-import { Graph } from 'react-d3-graph'
-import React, { useState, useEffect } from 'react'
+/* eslint-disable react-hooks/exhaustive-deps */
+//Internal resources
 import './App.css';
 import PlanSelector from './PlanSelector'
+import logo from './logo.svg';
 
+//External resources
+import React, { useState, useEffect } from 'react'
+import { Graph } from 'react-d3-graph'
+import { Menu, MenuItem } from '@material-ui/core'
 import 'react-markdown-editor-lite/lib/index.css';
 import Editor from "rich-markdown-editor"
-
 const axios = require('axios')
-const marked = require('marked')
 
+//Config variables
+const reset = false;
 const myConfig = {
   "automaticRearrangeAfterDropNode": false,
   "collapsible": false,
@@ -50,8 +54,8 @@ const myConfig = {
     "opacity": 1,
     "renderLabel": true,
     "size": 600,
-    "strokeColor": "black",
-    "strokeWidth": 1.5,
+    "strokeColor": "#000000",
+    "strokeWidth": 500,
     "symbolType": "circle",
   },
   "link": {
@@ -66,7 +70,7 @@ const myConfig = {
     "opacity": 1,
     "renderLabel": false,
     "semanticStrokeWidth": false,
-    "strokeWidth": 1.5,
+    "strokeWidth": 6,
     "markerHeight": 6,
     "markerWidth": 6,
     "strokeDasharray": 0,
@@ -75,26 +79,33 @@ const myConfig = {
   }
 }
 
-const userID = 'Nodemap';
-
 function App(props) {
 
   const [data, setData] = useState({})
   const [plans, setPlans] = useState([])
   const [activeNode, setActiveNode] = useState(null)
   const [mdValue, setMdValue] = useState([])
+  const [mouseX, setMouseX] = useState(null)
+  const [mouseY, setMouseY] = useState(null)
 
+  //helpers top get nodes in a plan
   function getData() {
-    return axios.get(`http://localhost:5001/nodemap-app/us-central1/api/plans/nodes?user=${props.userID}&title=${props.plan}`).then(_d => _d.data)
+    if (reset) {
+      return axios.get(`https://us-central1-nodemap-app.cloudfunctions.net/api/plan/nodes/?username=${props.userID}&plan_id=${props.plan}`).then(_d => _d.data)
+    } else {
+      return axios.get(`http://localhost:5001/nodemap-app/us-central1/api/plans/nodes?user=${props.userID}&title=${props.plan}`).then(_d => _d.data)
+    }
   }
 
+  //helper to get plan IDs
   function getPlans() {
-    return axios.get(`http://localhost:5001/nodemap-app/us-central1/api/plans?user=${userID}`).then(_d => _d.data)
+    return axios.get(`http://localhost:5001/nodemap-app/us-central1/api/plans?user=${props.userID}`).then(_d => _d.data)
   }
 
-  //save
+  //save when data changes
   useEffect(() => {
-    if(data.nodes.length){
+    console.log('NODES', data.nodes)
+    if (data.nodes.length) {
       Save();
     }
   }, [data])
@@ -109,7 +120,7 @@ function App(props) {
     return () => clearTimeout(delayDebounceFn)
   }, [mdValue])
 
-  //get plans
+  //get nodes and links data
   useEffect(() => {
     let mounted = true;
     getPlans().then(plans => {
@@ -118,50 +129,42 @@ function App(props) {
     })
     getData()
       .then(data => {
-        console.log(data)
-        // let links = []
-        // for (var key in data) {
+        if (reset) {
+          console.log(data)
+          var links = []
+          for (var key in data) {
 
-        //   console.log(key)
+            data[key].id = data[key].ID;
+            delete data[key].ID;
 
-        //   data[key].id = data[key].ID;
-        //   delete data[key].ID;
+            data[key].x = data[key].x ? data[key].x : window.innerWidth * 0.3;
+            data[key].y = data[key].y ? data[key].y : window.innerHeight * 0.1 + parseInt(key) * 150
 
-        //   data[key].x = data[key].x ? data[key].x : window.innerWidth * 0.3;
-        //   data[key].y = data[key].y ? data[key].y : window.innerHeight * 0.1 + parseInt(key) * 150
+            data[key].svg = `/Logos/${data[key].Platform}`
+            if (!data[key].md) {
+              data[key].md = `### ${data[key].Platform} ### \n # ${data[key].Title} # \n --- `
+            } else {
 
-        //   data[key].svg = `/Logos/${data[key].Platform}`
-        //   if (!data[key].md) {
-        //     data[key].md = `### ${data[key].Platform} ### \n # ${data[key].Title} # \n --- `
-        //   } else {
+            }
+            if (key > 0) {
+              links.push({ source: data[key - 1].id, target: data[key].id, color: data[key].IsComplete ? '#72EFDD' : '#D2D2D2' })
+            }
 
-        //   }
-        //   if (key > 0) {
-        //     links.push({ source: data[key - 1].id, target: data[key].id, color: data[key].IsComplete ? '#72EFDD' : '#D2D2D2' })
-        //   }
-
-        // }
-        // console.log(data)
+          }
+          console.log(data)
+        }
         if (mounted) {
-          setData(data.nodes)
+          if (reset) {
+            setData({ nodes: data, links: links })
+          } else {
+            setData(data.nodes)
+          }
         }
       })
     return () => mounted = false;
   }, [props])
 
-
-  function Save(){
-    console.log('RUNNING SAVE FUNCTION')
-    axios({
-      method: 'post',
-      url: `http://localhost:5001/nodemap-app/us-central1/api/plans/update?user=${props.userID}&title=${props.plan}`,
-      data: data
-    }).then(res=>{
-      console.log(res.data);
-      console.log('THAT WAS THE SAVE FUNCTION')
-    });
-  }
-
+  //set up links between nodes (NOT NEEDED UNLESS RESET IS REQUIRED)
   async function configureLinks() {
     let temp = data;
     temp.links = []
@@ -173,21 +176,7 @@ function App(props) {
     await setData({ nodes: temp.nodes, links: temp.links })
   }
 
-  const onDblClickNode = function (nodeId, node) {
-    setActiveNode(node)
-    setMdValue(node.md)
-    console.log(node)
-  };
-
-  function handleEditorChange(getText) {
-    const newValue = getText();
-    setMdValue(newValue)
-    if (activeNode) {
-      updateNodeData(activeNode ? activeNode.id : null, 'md', newValue)
-      // activeNode.md = newValue
-    }
-  }
-
+  //update a node property helper function
   function updateNodeData(nodeId, property, newValue) {
     let temp = data
     for (let key in temp.nodes) {
@@ -200,20 +189,68 @@ function App(props) {
     console.log(temp)
   };
 
-  function onNodePositionChange(node) {
-    // updateNodeData(node, 'fx', node.x)
+  //save plan data to firebase
+  function Save() {
+    if (data) {
+      console.log('RUNNING SAVE FUNCTION')
+      axios({
+        method: 'post',
+        url: `http://localhost:5001/nodemap-app/us-central1/api/plans/update?user=${props.userID}&title=${props.plan}`,
+        data: data
+      }).then(res => {
+        console.log(res.data);
+        console.log('THAT WAS THE SAVE FUNCTION')
+      });
+    }
   }
 
+
+  //node completion handler
   function onClickNode(node) {
     console.log(node)
     updateNodeData(node, 'IsComplete', 'BOOL')
     configureLinks()
   }
 
+  //update node coords when position changed
+  function onNodePositionChange(nodeId, x, y) {
+    console.log(x, y)
+    updateNodeData(nodeId, 'fx', x)
+    updateNodeData(nodeId, 'fy', y)
+    Save()
+  }
+
+  //set active node on hover
+  function onHoverNode(nodeId, node) {
+    setActiveNode(node)
+  };
+
+  //markdown content change handler
+  function handleEditorChange(getText) {
+    const newValue = getText();
+    setMdValue(newValue)
+    if (activeNode) {
+      updateNodeData(activeNode.id, 'md', newValue)
+    }
+  }
+
+  //context menu click handler
+  function handleNodeRightClick(event) {
+    event.preventDefault();
+    setMouseX(event.clientX + 20)
+    setMouseY(event.clientY)
+  }
+
+  //context menu close handler
+  function handleContextMenuClose() {
+    setMouseX(null)
+    setMouseY(null)
+  }
+
   return (
     <>
-      <nav style={{ height: '5vh', background: '#2b2b2b', display: 'flex', justifyContent: 'center', alignItems:'center' }}>
-        <PlanSelector plans={plans} plan={props.plan} userID={userID}></PlanSelector>
+      <nav style={{ height: '5vh', background: '#2b2b2b', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+        <PlanSelector plans={plans} plan={props.plan} userID={props.userID}></PlanSelector>
       </nav>
       <div style={{ display: 'flex', height: 'auto', background: '#F7F6F2' }} className="App">
         {data &&
@@ -221,25 +258,35 @@ function App(props) {
             <div style={{ height: '95vh', position: 'relative' }}>
               <Editor
                 style={{ minWidth: '30vw', maxWidth: '30vw', minHeight: '100%', maxHeight: '100%', textAlign: 'left', background: '#FFF', borderRight: '1px solid #d2d3d4' }}
-                value={activeNode ? activeNode.md : "t"}
+                value={activeNode ? activeNode.md : ""}
                 defaultValue={activeNode ? activeNode.md : ""}
                 onChange={handleEditorChange}>
               </Editor>
             </div>
-            <div style={{ width: '60vw', minWidth: '60vw' }}>
+            <div onContextMenu={(e) => handleNodeRightClick(e)} style={{ width: '60vw', minWidth: '60vw' }}>
               <Graph
                 id="graph_id"
                 data={data}
                 config={myConfig}
                 onClickNode={onClickNode}
                 onNodePositionChange={onNodePositionChange}
-                onMouseOverNode={onDblClickNode}
-              />
+                onMouseOverNode={onHoverNode}
+                onRightClickNode={(e) => { handleNodeRightClick(e) }}
+              ></Graph>
+              <Menu
+                keepMounted
+                open={mouseY !== null}
+                onClose={handleContextMenuClose}
+                anchorReference="anchorPosition"
+                anchorPosition={mouseY !== null && mouseX !== null ? { top: mouseY, left: mouseX } : undefined}>
+                <MenuItem onClick={handleContextMenuClose}>Add node after active node</MenuItem>
+                <MenuItem onClick={handleContextMenuClose}>Edit active node</MenuItem>
+              </Menu>
             </div>
           </>
         }
       </div >
-      
+
     </>
   );
 }
