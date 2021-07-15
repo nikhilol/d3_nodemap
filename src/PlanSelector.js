@@ -15,7 +15,7 @@ function PlanSelector(props) {
 
     return (
         <>
-            {props.plans &&
+            {props.plans && plan &&
                 <Select style={{ color: 'white' }} value={plan}>
                     {
                         props.plans.map(plan => {

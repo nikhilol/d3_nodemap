@@ -52,8 +52,8 @@ const myConfig = {
     "labelProperty": "Title",
     "mouseCursor": "pointer",
     "opacity": 1,
-    "renderLabel": true,
-    "size": 600,
+    "renderLabel": false,
+    "size": 750,
     "strokeColor": "#000000",
     "strokeWidth": 500,
     "symbolType": "circle",
@@ -138,7 +138,7 @@ function App(props) {
             delete data[key].ID;
 
             data[key].x = data[key].x ? data[key].x : window.innerWidth * 0.3;
-            data[key].y = data[key].y ? data[key].y : window.innerHeight * 0.1 + parseInt(key) * 150
+            data[key].y = data[key].y ? data[key].y : window.innerHeight * 0.1 + parseInt(key) * 200
 
             data[key].svg = `/Logos/${data[key].Platform}`
             if (!data[key].md) {
@@ -167,10 +167,10 @@ function App(props) {
   //set up links between nodes (NOT NEEDED UNLESS RESET IS REQUIRED)
   async function configureLinks() {
     let temp = data;
-    temp.links = []
     for (var key in temp.nodes) {
       if (key > 0) {
-        temp.links.push({ source: temp.nodes[key - 1].id, target: temp.nodes[key].id, color: temp.nodes[key].IsComplete ? '#72EFDD' : '#D2D2D2' })
+        // temp.links.push({ source: temp.nodes[key - 1].id, target: temp.nodes[key].id, color: temp.nodes[key].IsComplete ? '#72EFDD' : '#D2D2D2' })
+        updateLinkData(null, temp.nodes[key].id, 'color', temp.nodes[key].IsComplete ? '#72EFDD' : '#D2D2D2')
       }
     }
     await setData({ nodes: temp.nodes, links: temp.links })
@@ -189,6 +189,25 @@ function App(props) {
     console.log(temp)
   };
 
+  //update a link property helper function
+  function updateLinkData(source, target, property, newValue) {
+    let temp = data
+    if (source && target) {
+      for (let index in temp.links) {
+        if (temp.links[index].source === source && temp.links[index].target === target) {
+          temp.links[index][property] = newValue;
+        }
+      }
+    } else if (!source && target) {
+      for (let index in temp.links) {
+        if (temp.links[index].target === target) {
+          temp.links[index][property] = newValue;
+        }
+      }
+    }
+    setData(temp)
+  };
+
   //save plan data to firebase
   function Save() {
     if (data) {
@@ -204,6 +223,59 @@ function App(props) {
     }
   }
 
+  //Add node to plan
+  function AddNode() {
+    if (activeNode) {
+      data.nodes.forEach(node => {
+        if (node.id == activeNode.id) {
+          console.log('about to run')
+          let temp = data;
+          let key = data.nodes.indexOf(node) + 1;
+          console.log(key)
+
+          temp.nodes.splice(key, 0, {})
+
+          temp.nodes[key].id = generateRandomID();
+
+          console.log(temp.nodes[key].fy, temp.nodes[key-1].y + 200, temp.nodes[key].fx, temp.nodes[key-1].x)
+
+          if (temp.nodes[key+1] && (temp.nodes[key + 1].y === temp.nodes[key-1].y + 200 && temp.nodes[key + 1].x === temp.nodes[key-1].x)) {
+            temp.nodes[key].fx = temp.nodes[key - 1].fx ? temp.nodes[key - 1].fx + 200 : temp.nodes[key - 1].x + 200;
+            temp.nodes[key].fy = temp.nodes[key - 1].fy ? temp.nodes[key - 1].fy : temp.nodes[key - 1].y;
+            temp.nodes[key].x = temp.nodes[key - 1].fx ? temp.nodes[key - 1].fx + 200 : temp.nodes[key - 1].x + 200;
+            temp.nodes[key].y = temp.nodes[key - 1].fy ? temp.nodes[key - 1].fy : temp.nodes[key - 1].y;
+          } 
+          else {
+            temp.nodes[key].fx = temp.nodes[key - 1].fx ? temp.nodes[key - 1].fx : temp.nodes[key - 1].x;
+            temp.nodes[key].fy = temp.nodes[key - 1].fy ? temp.nodes[key - 1].fy + 200 : temp.nodes[key - 1].y + 200;
+            temp.nodes[key].x = temp.nodes[key - 1].fx ? temp.nodes[key - 1].fx : temp.nodes[key - 1].x;
+            temp.nodes[key].y = temp.nodes[key - 1].fy ? temp.nodes[key - 1].fy + 200 : temp.nodes[key - 1].y + 200;
+          }
+
+          temp.nodes[key].Platform = temp.nodes[key - 1].Platform
+          temp.nodes[key].svg = `/Logos/${temp.nodes[key].Platform}`
+          temp.nodes[key].md = `### ${temp.nodes[key].Platform} ### \n # THIS HAS WORKED # \n --- `
+
+          temp.links.push({ source: temp.nodes[key - 1].id, target: temp.nodes[key].id, color: '#D2D2D2' })
+        }
+      })
+    }
+    handleContextMenuClose()
+  }
+
+  function generateRandomID() {
+    var randomString = ""
+    var alphabet = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+    for (let c = 0; c < 20; c++) {
+      randomString += alphabet.charAt(Math.floor(Math.random() * alphabet.length))
+    }
+    return randomString
+  }
+
+  //Delete node to plan
+  function DeleteNode() {
+
+  }
 
   //node completion handler
   function onClickNode(node) {
@@ -279,8 +351,9 @@ function App(props) {
                 onClose={handleContextMenuClose}
                 anchorReference="anchorPosition"
                 anchorPosition={mouseY !== null && mouseX !== null ? { top: mouseY, left: mouseX } : undefined}>
-                <MenuItem onClick={handleContextMenuClose}>Add node after active node</MenuItem>
-                <MenuItem onClick={handleContextMenuClose}>Edit active node</MenuItem>
+                <MenuItem onClick={() => { AddNode() }}>Add node after active node</MenuItem>
+                <MenuItem onClick={() => { }}>Edit active node</MenuItem>
+                <MenuItem onClick={() => { DeleteNode() }}>Delete active node</MenuItem>
               </Menu>
             </div>
           </>

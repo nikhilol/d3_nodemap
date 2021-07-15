@@ -71,6 +71,20 @@ app.post("/plans", async (req, res) => {
     await firebase.firestore().collection("Users").doc(user).collection("Plans").doc(title).set({
         Title: title,
         TimeCreated: Date.now(),
+        nodes: {
+            links: [], nodes: [
+                {
+                    Platform: "Start",
+                    id: "Start",
+                    md: "### Start ### \n # This is the start of your new plan! # \n --- ",
+                    svg: "/Logos/Start.png",
+                    x: 575,
+                    y: 95,
+                    fx: 575,
+                    fy: 95,
+                },
+            ],
+        },
     });
     res.send(200);
 });
