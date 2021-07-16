@@ -1,10 +1,9 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-//Internal resources
 import './App.css';
 import PlanSelector from './PlanSelector'
 import logo from './logo.svg';
+import NewPlanPopup from './NewPlanPopup'
 
-//External resources
 import React, { useState, useEffect } from 'react'
 import { Graph } from 'react-d3-graph'
 import { Menu, MenuItem } from '@material-ui/core'
@@ -12,8 +11,8 @@ import 'react-markdown-editor-lite/lib/index.css';
 import Editor from "rich-markdown-editor"
 const axios = require('axios')
 
-//Config variables
-const reset = true;
+//Config
+const reset = false;
 const myConfig = {
   "automaticRearrangeAfterDropNode": false,
   "collapsible": false,
@@ -87,6 +86,7 @@ function App(props) {
   const [mdValue, setMdValue] = useState([])
   const [mouseX, setMouseX] = useState(null)
   const [mouseY, setMouseY] = useState(null)
+  const [openAddNodeWindow, setOpenAddNodeWindow] = useState(false)
 
   //helpers top get nodes in a plan
   function getData() {
@@ -224,10 +224,11 @@ function App(props) {
   }
 
   //Add node to plan
-  function AddNode() {
+  function AddNode(platform, title) {
+    console.log(title)
     if (activeNode) {
       data.nodes.forEach(node => {
-        if (node.id == activeNode.id) {
+        if (node.id === activeNode.id) {
           console.log('about to run')
           let temp = data;
           let key = data.nodes.indexOf(node) + 1;
@@ -252,15 +253,15 @@ function App(props) {
             temp.nodes[key].y = temp.nodes[key - 1].fy ? temp.nodes[key - 1].fy + 200 : temp.nodes[key - 1].y + 200;
           }
 
-          temp.nodes[key].Platform = temp.nodes[key - 1].Platform
-          temp.nodes[key].svg = `/Logos/${temp.nodes[key].Platform}`
-          temp.nodes[key].md = `### ${temp.nodes[key].Platform} ### \n # THIS HAS WORKED # \n --- `
+          temp.nodes[key].Platform = platform.replace('.png', '')
+          temp.nodes[key].svg = `/Logos/${platform}`
+          temp.nodes[key].md = `### ${platform.replace('.png', '')} ### \n # ${title} # \n --- `
 
           temp.links.push({ source: temp.nodes[key - 1].id, target: temp.nodes[key].id, color: '#D2D2D2' })
         }
       })
     }
-    handleContextMenuClose()
+    Save();
   }
 
   function generateRandomID() {
@@ -351,13 +352,14 @@ function App(props) {
                 onClose={handleContextMenuClose}
                 anchorReference="anchorPosition"
                 anchorPosition={mouseY !== null && mouseX !== null ? { top: mouseY, left: mouseX } : undefined}>
-                <MenuItem onClick={() => { AddNode() }}>Add node after active node</MenuItem>
-                <MenuItem onClick={() => { }}>Edit active node</MenuItem>
-                <MenuItem onClick={() => { DeleteNode() }}>Delete active node</MenuItem>
+                <MenuItem onClick={() => { setOpenAddNodeWindow(true); handleContextMenuClose() }}>Add node after active node</MenuItem>
+                <MenuItem onClick={() => { handleContextMenuClose()}}>Edit active node</MenuItem>
+                <MenuItem onClick={() => { DeleteNode(); handleContextMenuClose() }}>Delete active node</MenuItem>
               </Menu>
             </div>
           </>
         }
+        <NewPlanPopup open={openAddNodeWindow} close={()=>setOpenAddNodeWindow(false)} addNode={AddNode}></NewPlanPopup>
       </div >
 
     </>
