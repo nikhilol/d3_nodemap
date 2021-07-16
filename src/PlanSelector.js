@@ -11,18 +11,20 @@ const firebase = require('firebase').default
 function PlanSelector(props) {
 
     const [open, setOpen] = useState(false);
-    const [plan, setPlan] = useState(props.plan)
+
+    console.log(props.plan)
 
     return (
         <>
-            {props.plans && plan &&
-                <Select style={{ color: 'white' }} value={plan}>
+            {props.plans &&
+                <Select style={{ color: 'white' }} defaultValue={props.plan}>
                     {
-                        props.plans.map(plan => {
+                        props.plans.map(_plan => {
+                            console.log(_plan)
                             return (
-                                <Link style={{ width: '100%', height: '100%' }} to={`/plan/${props.userID}/${encodeURI(plan)}`}>
-                                    <MenuItem value={plan}>
-                                        {plan}
+                                <Link style={{ width: '100%', height: '100%' }} to={`/plan/${props.userID}/${encodeURI(_plan)}`}>
+                                    <MenuItem value={_plan}>
+                                        {_plan}
                                     </MenuItem>
                                 </Link>
 

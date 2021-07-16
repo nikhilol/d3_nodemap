@@ -13,7 +13,7 @@ import Editor from "rich-markdown-editor"
 const axios = require('axios')
 
 //Config variables
-const reset = false;
+const reset = true;
 const myConfig = {
   "automaticRearrangeAfterDropNode": false,
   "collapsible": false,
@@ -53,7 +53,7 @@ const myConfig = {
     "mouseCursor": "pointer",
     "opacity": 1,
     "renderLabel": false,
-    "size": 750,
+    "size": 1000,
     "strokeColor": "#000000",
     "strokeWidth": 500,
     "symbolType": "circle",
