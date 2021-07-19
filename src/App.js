@@ -6,11 +6,11 @@ import NewPlanPopup from './NewPlanPopup'
 
 import React, { useState, useEffect } from 'react'
 import { Graph } from 'react-d3-graph'
-import { Menu, MenuItem } from '@material-ui/core'
+import { Menu, MenuItem, Button } from '@material-ui/core'
 import 'react-markdown-editor-lite/lib/index.css';
 import Editor from "rich-markdown-editor"
 const axios = require('axios')
-
+const firebase = require("firebase").default
 //Config
 const reset = false;
 const myConfig = {
@@ -87,7 +87,20 @@ function App(props) {
   const [mouseX, setMouseX] = useState(null)
   const [mouseY, setMouseY] = useState(null)
   const [openAddNodeWindow, setOpenAddNodeWindow] = useState(false)
+  const [user, setUser] = useState(null)
 
+  firebase.auth().onAuthStateChanged((user) => {
+    if (user) {
+      console.log(user)
+      setUser(user)
+    } else {window.location.assign('/login')}
+  })
+
+  async function logoutHandler(){
+    await firebase.auth().signOut()
+    window.location.assign('/login')
+  }
+  
   //helpers top get nodes in a plan
   function getData() {
     if (reset) {
@@ -125,6 +138,9 @@ function App(props) {
     let mounted = true;
     getPlans().then(plans => {
       console.log(plans)
+      if (props.userID && !props.plan && plans.length) {
+        window.location.assign(`/plan/${props.userID}/${plans[0]}`)
+      }
       setPlans(plans)
     })
     getData()
@@ -238,14 +254,14 @@ function App(props) {
 
           temp.nodes[key].id = generateRandomID();
 
-          console.log(temp.nodes[key].fy, temp.nodes[key-1].y + 200, temp.nodes[key].fx, temp.nodes[key-1].x)
+          console.log(temp.nodes[key].fy, temp.nodes[key - 1].y + 200, temp.nodes[key].fx, temp.nodes[key - 1].x)
 
-          if (temp.nodes[key+1] && (temp.nodes[key + 1].y === temp.nodes[key-1].y + 200 && temp.nodes[key + 1].x === temp.nodes[key-1].x)) {
+          if (temp.nodes[key + 1] && (temp.nodes[key + 1].y === temp.nodes[key - 1].y + 200 && temp.nodes[key + 1].x === temp.nodes[key - 1].x)) {
             temp.nodes[key].fx = temp.nodes[key - 1].fx ? temp.nodes[key - 1].fx + 200 : temp.nodes[key - 1].x + 200;
             temp.nodes[key].fy = temp.nodes[key - 1].fy ? temp.nodes[key - 1].fy : temp.nodes[key - 1].y;
             temp.nodes[key].x = temp.nodes[key - 1].fx ? temp.nodes[key - 1].fx + 200 : temp.nodes[key - 1].x + 200;
             temp.nodes[key].y = temp.nodes[key - 1].fy ? temp.nodes[key - 1].fy : temp.nodes[key - 1].y;
-          } 
+          }
           else {
             temp.nodes[key].fx = temp.nodes[key - 1].fx ? temp.nodes[key - 1].fx : temp.nodes[key - 1].x;
             temp.nodes[key].fy = temp.nodes[key - 1].fy ? temp.nodes[key - 1].fy + 200 : temp.nodes[key - 1].y + 200;
@@ -258,10 +274,11 @@ function App(props) {
           temp.nodes[key].md = `### ${platform.replace('.png', '')} ### \n # ${title} # \n --- `
 
           temp.links.push({ source: temp.nodes[key - 1].id, target: temp.nodes[key].id, color: '#D2D2D2' })
+
+          setData({ nodes: temp.nodes, links: temp.links })
         }
       })
     }
-    Save();
   }
 
   function generateRandomID() {
@@ -275,7 +292,15 @@ function App(props) {
 
   //Delete node to plan
   function DeleteNode() {
-
+    // let temp = data;
+    // if (activeNode) {
+    //   temp.nodes.forEach(node => {
+    //     if (node.id === activeNode.id) {
+    //       temp.nodes.splice(temp.nodes.indexOf(node), temp.nodes.indexOf(node))
+    //     }
+    //   })
+    //   setData(temp)
+    // }
   }
 
   //node completion handler
@@ -324,6 +349,7 @@ function App(props) {
     <>
       <nav style={{ height: '5vh', background: '#2b2b2b', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
         <PlanSelector plans={plans} plan={props.plan} userID={props.userID}></PlanSelector>
+        <Button style={{background:'red', color:'white', position:'absolute', right:'1vh'}} onClick={logoutHandler}>Log out</Button>
       </nav>
       <div style={{ display: 'flex', height: 'auto', background: '#F7F6F2' }} className="App">
         {data &&
@@ -353,13 +379,13 @@ function App(props) {
                 anchorReference="anchorPosition"
                 anchorPosition={mouseY !== null && mouseX !== null ? { top: mouseY, left: mouseX } : undefined}>
                 <MenuItem onClick={() => { setOpenAddNodeWindow(true); handleContextMenuClose() }}>Add node after active node</MenuItem>
-                <MenuItem onClick={() => { handleContextMenuClose()}}>Edit active node</MenuItem>
+                <MenuItem onClick={() => { handleContextMenuClose() }}>Edit active node</MenuItem>
                 <MenuItem onClick={() => { DeleteNode(); handleContextMenuClose() }}>Delete active node</MenuItem>
               </Menu>
             </div>
           </>
         }
-        <NewPlanPopup open={openAddNodeWindow} close={()=>setOpenAddNodeWindow(false)} addNode={AddNode}></NewPlanPopup>
+        <NewPlanPopup open={openAddNodeWindow} close={() => setOpenAddNodeWindow(false)} addNode={AddNode}></NewPlanPopup>
       </div >
 
     </>

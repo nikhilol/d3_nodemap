@@ -1,12 +1,14 @@
-import React from 'react';
+import React, {useState} from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
+import Login from './Login'
 import reportWebVitals from './reportWebVitals';
 import { BrowserRouter as Router, Switch, Route, useParams, withRouter } from 'react-router-dom';
-const firebase = require('firebase')
+import Signup from './Signup';
+const firebase = require('firebase').default
 
-const app = firebase.default.initializeApp({
+const app = firebase.initializeApp({
   apiKey: "AIzaSyCUzsoeXiMaMNekQnH-nK8pZkvcmfttVSI",
   authDomain: "nodemap-app.firebaseapp.com",
   projectId: "nodemap-app",
@@ -18,11 +20,15 @@ const app = firebase.default.initializeApp({
 
 
 ReactDOM.render(
-    <Router>
-      <Switch>
-        <Route exact path='/plan/:user/:plan' component={withRouter(PlanRoute)}/>
-      </Switch>
-    </Router>,
+  <Router>
+    <Switch>
+      <Route exact path='/plan/:user/:plan' component={withRouter(PlanRoute)} />
+      <Route exact path='/plan/:user' component={withRouter(UserRoute)} />
+      <Route path='/login' component={Login}></Route>
+      <Route path='/signup' component={Signup}></Route>
+      <Route path='/' component={App}></Route>
+    </Switch>
+  </Router>,
   document.getElementById('root')
 );
 
@@ -33,5 +39,14 @@ reportWebVitals();
 
 function PlanRoute() {
   let { user, plan } = useParams()
-  return (<App userID={user} plan={plan}></App>)
+  if (user) {
+    return (<App userID={user}  plan={plan}></App>)
+  } 
+}
+
+function UserRoute() {
+  let { user } = useParams()
+  if (user) {
+    return (<App userID={user}></App>)
+  }
 }

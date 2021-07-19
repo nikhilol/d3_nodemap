@@ -28,6 +28,39 @@ firebase.initializeApp({
 const app = express();
 app.use(cors());
 
+app.post("/signup", async (req, res) => {
+    const { Email, Username, Password } = req.body;
+    console.log(Email, Username, Password);
+    try {
+        await firebase.auth().createUser({
+            email: Email,
+            password: Password,
+            displayName: Username,
+        });
+        await firebase.firestore().collection("Users").doc(Username).collection("Plans").doc("Your first plan!").set({
+            nodes: {
+                nodes: [{
+                    IsComplete: true,
+                    Platform: "Start",
+                    fx: 575,
+                    fy: 95,
+                    id: "Start",
+                    // eslint-disable-next-line quotes
+                    md: `### Start ### \n # This is the start of your new plan! # \n --- `,
+                    svg: "/Logos/Start.png",
+                    x: 575,
+                    y: 95,
+                }],
+                links: [],
+            },
+        });
+        res.send(200);
+    } catch (e) {
+        res.send(e);
+    }
+});
+
+
 app.get("/plans", async (req, res) => {
     const { user } = req.query;
     await firebase.firestore().collection("Users").doc(user).collection("Plans").get().then((snapshot) => {
