@@ -30,7 +30,7 @@ export function Signup() {
     }
 
     return (
-        <div style={{ display: 'flex', height: '100vh', justifyContent: 'center', alignItems: 'center', background: '#303030' }}>
+        <div style={{ display: 'flex', height: '100vh', justifyContent: 'center', alignItems: 'center', background: '#303030' }} className='Login'>
             <div style={{ width: '300px', height: 'auto', padding: '50px', border: '1px solid #E1E1E1', borderRadius: '10px', display: 'flex', flexDirection: 'column', alignItems: 'center', background: '#fcfcfc' }}>
                 <img src={Logo} style={{ width: '50%', margin: '20px' }} alt="" />
                 <div style={{ borderBottom: '1px solid #EEE', width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', marginTop: '50px' }}>

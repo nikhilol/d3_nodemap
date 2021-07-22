@@ -350,9 +350,9 @@ function App(props) {
   }
 
   return (
-    <>
-      <nav style={{ height: '5vh', background: '#2b2b2b', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-        <h2 style={{ cursor: 'pointer', position: 'relative', color: 'white', display:'flex', alignItems:'center', fontWeight:'lighter' }} onClick={() => setOpenPlanSelector(true)}>{props.plan}<ExpandMore id='planTitle'></ExpandMore></h2>
+    <div style={{ margin: 0, padding: 0 }} className='App'>
+      <nav style={{ height: '5vh', background: '#2b2b2b', display: 'flex', justifyContent: 'center', alignItems: 'center' }} className="App">
+        <h2 style={{ cursor: 'pointer', position: 'relative', color: 'white', display: 'flex', alignItems: 'center', fontWeight: 'lighter' }} onClick={() => setOpenPlanSelector(true)}>{props.plan}<ExpandMore id='planTitle'></ExpandMore></h2>
         <Button style={{ background: '#ff6666', color: 'white', position: 'absolute', right: '1vh' }} onClick={logoutHandler}>Log out</Button>
       </nav>
       {data &&
@@ -366,7 +366,7 @@ function App(props) {
                 onChange={handleEditorChange}>
               </Editor>
             </div>
-            <div onContextMenu={(e) => handleNodeRightClick(e)} style={{ width: '70vw', position: 'relative', marginLeft: '10vh', cursor:'grab',background: '#F7F6F2', backgroundImage: 'radial-gradient(#d2d2d2 1px, transparent 0)', backgroundSize: '1vw 1vw', backgroundPosition: '-0.5vw -0.5vw' }}>
+            <div onContextMenu={(e) => handleNodeRightClick(e)} style={{ width: '70vw', position: 'relative', marginLeft: '10vh', cursor: 'grab', background: '#F7F6F2', backgroundImage: 'radial-gradient(#d2d2d2 1px, transparent 0)', backgroundSize: '1vw 1vw', backgroundPosition: '-0.5vw -0.5vw' }}>
               <Graph
                 id="graph_id"
                 data={data}
@@ -393,8 +393,7 @@ function App(props) {
           </div >
         </>
       }
-
-    </>
+    </div>
   );
 }
 

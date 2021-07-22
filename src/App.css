@@ -1,5 +1,4 @@
-* {
-}
+* {}
 
 .App {
   text-align: center;
@@ -67,34 +66,33 @@ g .node image:hover {
   padding: 0 5vh;
 }
 
-.sc-hHEiqL{
+.sc-hHEiqL {
   padding: 0;
   overflow: auto;
   line-height: 2em !important;
-  
 }
 
-:not(.sc-hHEiqL p){
+:not(.sc-hHEiqL p, .sc-hHEiqL strong, .sc-hHEiqL em, .sc-hHEiqL del, .Login *) {
   font-family: 'Permanent Marker' !important;
 }
 
-.sc-hHEiqL :is(p, strong, em, del){
-  font-family: 'Poppins' !important; 
+.sc-hHEiqL p, .sc-hHEiqL strong, .sc-hHEiqL em, .sc-hHEiqL del, .Login * {
+  font-family: 'Poppins' !important;
 }
 
 .sc-hHEiqL::-webkit-scrollbar {
   display: none;
 }
 
-.node image{
+.node image {
   border-radius: 50px !important;
 }
 
-.MuiDialogTitle-root{
+.MuiDialogTitle-root {
   z-index: 3;
 }
 
-a{
+a {
   color: black;
   text-decoration: none;
 }
