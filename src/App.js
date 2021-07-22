@@ -2,11 +2,13 @@
 import './App.css';
 import PlanSelector from './PlanSelector'
 import logo from './logo.svg';
-import NewPlanPopup from './NewPlanPopup'
+import NewNodePopup from './NewNodePopup'
+import RESOURCES from './Resources/resources'
 
 import React, { useState, useEffect } from 'react'
 import { Graph } from 'react-d3-graph'
 import { Menu, MenuItem, Button } from '@material-ui/core'
+import { ExpandMore } from '@material-ui/icons'
 import 'react-markdown-editor-lite/lib/index.css';
 import Editor from "rich-markdown-editor"
 const axios = require('axios')
@@ -21,7 +23,7 @@ const myConfig = {
   "focusZoom": 1,
   "freezeAllDragEvents": false,
   "height": window.innerHeight * 0.94,
-  "highlightDegree": 1,
+  "highlightDegree": 0,
   "highlightOpacity": 1,
   "linkHighlightBehavior": false,
   "maxZoom": 8,
@@ -30,7 +32,7 @@ const myConfig = {
   "panAndZoom": false,
   "staticGraph": false,
   "staticGraphWithDragAndDrop": true,
-  "width": window.innerWidth * 0.6,
+  "width": window.innerWidth * 0.7,
   "d3": {
     "alphaTarget": 0.05,
     "gravity": -100,
@@ -43,11 +45,11 @@ const myConfig = {
     "fontColor": "black",
     "fontSize": 24,
     "fontWeight": "bold",
-    "highlightColor": "SAME",
+    "highlightColor": "green",
     "highlightFontSize": 36,
     "highlightFontWeight": "normal",
-    "highlightStrokeColor": "SAME",
-    "highlightStrokeWidth": "SAME",
+    "highlightStrokeColor": "green",
+    "highlightStrokeWidth": "20",
     "labelProperty": "Title",
     "mouseCursor": "pointer",
     "opacity": 1,
@@ -65,7 +67,7 @@ const myConfig = {
     "highlightFontSize": 36,
     "highlightFontWeight": "normal",
     "labelProperty": "label",
-    "mouseCursor": "pointer",
+    "mouseCursor": "auto",
     "opacity": 1,
     "renderLabel": false,
     "semanticStrokeWidth": false,
@@ -87,32 +89,32 @@ function App(props) {
   const [mouseX, setMouseX] = useState(null)
   const [mouseY, setMouseY] = useState(null)
   const [openAddNodeWindow, setOpenAddNodeWindow] = useState(false)
+  const [openPlanSelector, setOpenPlanSelector] = useState(false)
   const [user, setUser] = useState(null)
 
   firebase.auth().onAuthStateChanged((user) => {
     if (user) {
-      console.log(user)
       setUser(user)
-    } else {window.location.assign('/login')}
+    } else { window.location.assign('/login') }
   })
 
-  async function logoutHandler(){
+  async function logoutHandler() {
     await firebase.auth().signOut()
     window.location.assign('/login')
   }
-  
+
   //helpers top get nodes in a plan
   function getData() {
     if (reset) {
       return axios.get(`https://us-central1-nodemap-app.cloudfunctions.net/api/plan/nodes/?username=${props.userID}&plan_id=${props.plan}`).then(_d => _d.data)
     } else {
-      return axios.get(`http://localhost:5001/nodemap-app/us-central1/api/plans/nodes?user=${props.userID}&title=${props.plan}`).then(_d => _d.data)
+      return axios.get(`${RESOURCES.apiURL}/plans/nodes?user=${props.userID}&title=${props.plan}`).then(_d => _d.data)
     }
   }
 
   //helper to get plan IDs
   function getPlans() {
-    return axios.get(`http://localhost:5001/nodemap-app/us-central1/api/plans?user=${props.userID}`).then(_d => _d.data)
+    return axios.get(`${RESOURCES.apiURL}/plans?user=${props.userID}`).then(_d => _d.data)
   }
 
   //save when data changes
@@ -174,6 +176,7 @@ function App(props) {
             setData({ nodes: data, links: links })
           } else {
             setData(data.nodes)
+            setActiveNode(data.nodes.nodes[0])
           }
         }
       })
@@ -230,7 +233,7 @@ function App(props) {
       console.log('RUNNING SAVE FUNCTION')
       axios({
         method: 'post',
-        url: `http://localhost:5001/nodemap-app/us-central1/api/plans/update?user=${props.userID}&title=${props.plan}`,
+        url: `${RESOURCES.apiURL}/plans/update?user=${props.userID}&title=${props.plan}`,
         data: data
       }).then(res => {
         console.log(res.data);
@@ -321,6 +324,7 @@ function App(props) {
   //set active node on hover
   function onHoverNode(nodeId, node) {
     setActiveNode(node)
+    console.log(node)
   };
 
   //markdown content change handler
@@ -348,21 +352,21 @@ function App(props) {
   return (
     <>
       <nav style={{ height: '5vh', background: '#2b2b2b', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-        <PlanSelector plans={plans} plan={props.plan} userID={props.userID}></PlanSelector>
-        <Button style={{background:'red', color:'white', position:'absolute', right:'1vh'}} onClick={logoutHandler}>Log out</Button>
+        <h2 style={{ cursor: 'pointer', position: 'relative', color: 'white', display:'flex', alignItems:'center', fontWeight:'lighter' }} onClick={() => setOpenPlanSelector(true)}>{props.plan}<ExpandMore id='planTitle'></ExpandMore></h2>
+        <Button style={{ background: '#ff6666', color: 'white', position: 'absolute', right: '1vh' }} onClick={logoutHandler}>Log out</Button>
       </nav>
-      <div style={{ display: 'flex', height: 'auto', background: '#F7F6F2' }} className="App">
-        {data &&
-          <>
-            <div style={{ height: '95vh', position: 'relative' }}>
+      {data &&
+        <>
+          <div style={{ display: 'flex', height: '95vh' }} className="App">
+            <div style={{ height: '100%', position: 'relative', width: '30vw' }} spellCheck='false'>
               <Editor
-                style={{ minWidth: '30vw', maxWidth: '30vw', minHeight: '100%', maxHeight: '100%', textAlign: 'left', background: '#FFF', borderRight: '1px solid #d2d3d4' }}
-                value={activeNode ? activeNode.md : ""}
-                defaultValue={activeNode ? activeNode.md : ""}
+                style={{ width: '100%', height: '100%', textAlign: 'left', background: '#FFF', borderRight: '1px solid #d2d3d4' }}
+                value={activeNode ? activeNode.md : 'test'}
+                defaultValue={activeNode ? activeNode.md : "# Hover over the start node for help with creating your plan #"}
                 onChange={handleEditorChange}>
               </Editor>
             </div>
-            <div onContextMenu={(e) => handleNodeRightClick(e)} style={{ width: '60vw', minWidth: '60vw' }}>
+            <div onContextMenu={(e) => handleNodeRightClick(e)} style={{ width: '70vw', position: 'relative', marginLeft: '10vh', cursor:'grab',background: '#F7F6F2', backgroundImage: 'radial-gradient(#d2d2d2 1px, transparent 0)', backgroundSize: '1vw 1vw', backgroundPosition: '-0.5vw -0.5vw' }}>
               <Graph
                 id="graph_id"
                 data={data}
@@ -371,6 +375,7 @@ function App(props) {
                 onNodePositionChange={onNodePositionChange}
                 onMouseOverNode={onHoverNode}
                 onRightClickNode={(e) => { handleNodeRightClick(e) }}
+                style={{}}
               ></Graph>
               <Menu
                 keepMounted
@@ -383,10 +388,11 @@ function App(props) {
                 <MenuItem onClick={() => { DeleteNode(); handleContextMenuClose() }}>Delete active node</MenuItem>
               </Menu>
             </div>
-          </>
-        }
-        <NewPlanPopup open={openAddNodeWindow} close={() => setOpenAddNodeWindow(false)} addNode={AddNode}></NewPlanPopup>
-      </div >
+            <PlanSelector plans={plans} plan={props.plan} userID={props.userID} open={openPlanSelector} close={() => setOpenPlanSelector(false)}></PlanSelector>
+            <NewNodePopup open={openAddNodeWindow} close={() => setOpenAddNodeWindow(false)} addNode={AddNode}></NewNodePopup>
+          </div >
+        </>
+      }
 
     </>
   );

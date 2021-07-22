@@ -1,38 +1,46 @@
 import React, { useState } from 'react'
-import { Select, MenuItem, ClickAwayListener } from '@material-ui/core'
+import { Menu, MenuItem, ClickAwayListener, Button, Dialog, Divider } from '@material-ui/core'
 import {
     BrowserRouter as Router,
     Switch,
     Route,
     Link
 } from "react-router-dom";
+import AddNewPlanPopup from './AddNewPlanPopup'
 const firebase = require('firebase').default
 
 function PlanSelector(props) {
 
-    const [open, setOpen] = useState(false);
-
-    console.log(props.plan)
+    const [addNewPlanPopupOpen, setAddNewPlanPopupOpen] = useState(false);
 
     return (
         <>
             {props.plans &&
-                <Select style={{ color: 'white' }} defaultValue={props.plan}>
+                <Menu
+                    id="simple-menu"
+                    anchorEl={document.getElementById('planTitle')}
+                    keepMounted
+                    open={props.open}
+                >
                     {
+
                         props.plans.map(_plan => {
                             console.log(_plan)
                             return (
-                                <Link style={{ width: '100%', height: '100%' }} to={`/plan/${props.userID}/${encodeURI(_plan)}`}>
-                                    <MenuItem value={_plan}>
+                                <Link style={{ width: '100%', height: '100%', colour: 'black' }} to={`/plan/${props.userID}/${encodeURI(_plan)}`}>
+                                    <MenuItem value={props.plans.indexOf(_plan)} onClick={props.close}>
                                         {_plan}
                                     </MenuItem>
                                 </Link>
-
                             )
                         })
                     }
-                </Select>
+                    <Divider></Divider>
+                    <Button fullWidth onClick={() => { setAddNewPlanPopupOpen(true); props.close() }}>+ Add new plan</Button>
+                </Menu>
+
             }
+            <AddNewPlanPopup open={addNewPlanPopupOpen} close={() => setAddNewPlanPopupOpen(false)}></AddNewPlanPopup>
         </>
     )
 }

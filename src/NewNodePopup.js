@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { Dialog, DialogContent, DialogTitle, Divider, DialogActions, Button, TextField } from '@material-ui/core'
-import NewPlanSearchSelector from './NewPlanSearchSelector'
+import NewNodeSearchSelector from './NewNodeSearchSelector'
 
 export default function NewPlanPopup(props) {
 
@@ -15,7 +15,7 @@ export default function NewPlanPopup(props) {
             <Divider />
             <DialogContent style={{ minHeight: '60vh', maxHeight: '60vh' }}>
                 <div style={{ display: 'flex', height: '60vh' }}>
-                    <NewPlanSearchSelector onSelect={(platform, type) => setPlatform(type === 'Custom' ? platform + '.png' : platform)}></NewPlanSearchSelector>
+                    <NewNodeSearchSelector onSelect={(platform, type) => setPlatform(type === 'Custom' ? platform + '.png' : platform)}></NewNodeSearchSelector>
                     <div style={{ margin: '1vh' }}>
                         <Divider orientation='vertical'></Divider>
                     </div>
@@ -33,7 +33,7 @@ export default function NewPlanPopup(props) {
             <Divider></Divider>
             <DialogActions>
                 <Button onClick={() => props.close()}>Cancel</Button>
-                <Button onClick={()=> {props.addNode(platform, title); props.close()}}>Save</Button>
+                <Button onClick={()=> {props.addNode(platform, title); props.close()}}>Add</Button>
             </DialogActions>
         </Dialog>
     )

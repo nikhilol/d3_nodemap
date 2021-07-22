@@ -1,10 +1,12 @@
 {
     "Custom":[
         "Start",
+        "End",
         "Milestone",
         "Think",
         "Speak",
-        "Call"
+        "Call",
+        "Learn"
     ],
     "Platforms": [
         "Facebook",

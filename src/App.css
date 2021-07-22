@@ -1,5 +1,4 @@
 * {
-  font-family: 'Poppins' !important;
 }
 
 .App {
@@ -60,17 +59,31 @@ g .node image:hover {
 .section-container {
   background: rgb(250, 250, 249);
   color: white;
-  font-family: 'Poppins';
+  width: 70vw !important;
   word-wrap: break-word;
 }
 
-.hlVYRS {
-  overflow: scroll;
-  padding: 0vw 2.5vw;
+.sc-bdnxRM {
+  padding: 0 5vh;
 }
 
-.hNxLRE{
-  line-height: 2.5em !important;
+.sc-hHEiqL{
+  padding: 0;
+  overflow: auto;
+  line-height: 2em !important;
+  
+}
+
+:not(.sc-hHEiqL p){
+  font-family: 'Permanent Marker' !important;
+}
+
+.sc-hHEiqL :is(p, strong, em, del){
+  font-family: 'Poppins' !important; 
+}
+
+.sc-hHEiqL::-webkit-scrollbar {
+  display: none;
 }
 
 .node image{
@@ -79,4 +92,9 @@ g .node image:hover {
 
 .MuiDialogTitle-root{
   z-index: 3;
+}
+
+a{
+  color: black;
+  text-decoration: none;
 }

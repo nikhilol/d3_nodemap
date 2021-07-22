@@ -1,5 +1,5 @@
+/* eslint-disable no-useless-escape */
 /* eslint-disable object-curly-spacing */
-/* eslint-disable linebreak-style */
 /* eslint-disable max-len */
 /* eslint-disable indent */
 const functions = require("firebase-functions");
@@ -32,31 +32,28 @@ app.post("/signup", async (req, res) => {
     const { Email, Username, Password } = req.body;
     console.log(Email, Username, Password);
     try {
+        await firebase.firestore().collection("Users").get().then((snap)=>{
+            snap.forEach((doc)=>{
+                console.log(doc.id.toLowerCase());
+                if (doc.id.toLowerCase() === Username.toLowerCase()) {
+                    throw Error("Username is already taken");
+                }
+            });
+        });
         await firebase.auth().createUser({
             email: Email,
             password: Password,
             displayName: Username,
         });
-        await firebase.firestore().collection("Users").doc(Username).collection("Plans").doc("Your first plan!").set({
-            nodes: {
-                nodes: [{
-                    IsComplete: true,
-                    Platform: "Start",
-                    fx: 575,
-                    fy: 95,
-                    id: "Start",
-                    // eslint-disable-next-line quotes
-                    md: `### Start ### \n # This is the start of your new plan! # \n --- `,
-                    svg: "/Logos/Start.png",
-                    x: 575,
-                    y: 95,
-                }],
-                links: [],
-            },
+        let data;
+        await firebase.firestore().collection("Users").doc("Nodemap").collection("Plans").doc("Your first plan!").get().then((doc)=>{
+            data = doc.data();
+            console.log(data);
         });
+        await firebase.firestore().collection("Users").doc(Username).collection("Plans").doc("Your first plan!").set(data);
         res.send(200);
     } catch (e) {
-        res.send(e);
+        res.send(e.message);
     }
 });
 
@@ -109,7 +106,8 @@ app.post("/plans", async (req, res) => {
                 {
                     Platform: "Start",
                     id: "Start",
-                    md: "### Start ### \n # This is the start of your new plan! # \n --- ",
+                    // eslint-disable-next-line quotes
+                    md: `### Start ### \n # This is the start of your new plan! # \n --- `,
                     svg: "/Logos/Start.png",
                     x: 575,
                     y: 95,
@@ -124,3 +122,5 @@ app.post("/plans", async (req, res) => {
 
 
 exports.api = functions.https.onRequest(app);
+
+

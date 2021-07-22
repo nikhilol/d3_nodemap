@@ -18,7 +18,7 @@ function Login(props) {
         try {
             await firebase.default.auth().setPersistence(firebase.default.auth.Auth.Persistence.LOCAL)
             let user = await firebase.default.auth().signInWithEmailAndPassword(document.getElementById('Email').value, document.getElementById('Password').value)
-            window.location.assign(`/plan/${firebase.default.auth().currentUser.displayName}`)
+            window.location.assign(`/plan/${user.user.displayName}`)
         } catch(e) {
             alert(e.message)
         }
