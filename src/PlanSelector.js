@@ -19,8 +19,8 @@ function PlanSelector(props) {
                 <Menu
                     id="simple-menu"
                     anchorEl={document.getElementById('planTitle')}
-                    keepMounted
                     open={props.open}
+                    onClose={props.close}
                 >
                     {
 
@@ -28,7 +28,7 @@ function PlanSelector(props) {
                             console.log(_plan)
                             return (
                                 <Link style={{ width: '100%', height: '100%', colour: 'black' }} to={`/plan/${props.userID}/${encodeURI(_plan)}`}>
-                                    <MenuItem value={props.plans.indexOf(_plan)}>
+                                    <MenuItem value={props.plans.indexOf(_plan)} onClick={props.close}>
                                         {_plan}
                                     </MenuItem>
                                 </Link>
