@@ -8,7 +8,7 @@ import RESOURCES from './Resources/resources'
 import React, { useState, useEffect } from 'react'
 import { Graph } from 'react-d3-graph'
 import { Menu, MenuItem, Button } from '@material-ui/core'
-import { ExpandMore } from '@material-ui/icons'
+import { EmojiObjects, ExpandMore } from '@material-ui/icons'
 import 'react-markdown-editor-lite/lib/index.css';
 import Editor from "rich-markdown-editor"
 const axios = require('axios')
@@ -95,6 +95,9 @@ function App(props) {
   firebase.auth().onAuthStateChanged((user) => {
     if (user) {
       setUser(user)
+      if (!props.userID) {
+        window.location.assign('/plan/' + user.displayName)
+      }
     } else { window.location.assign('/login') }
   })
 
@@ -230,14 +233,12 @@ function App(props) {
   //save plan data to firebase
   function Save() {
     if (data) {
-      console.log('RUNNING SAVE FUNCTION')
       axios({
         method: 'post',
         url: `${RESOURCES.apiURL}/plans/update?user=${props.userID}&title=${props.plan}`,
         data: data
       }).then(res => {
         console.log(res.data);
-        console.log('THAT WAS THE SAVE FUNCTION')
       });
     }
   }
@@ -295,15 +296,55 @@ function App(props) {
 
   //Delete node to plan
   function DeleteNode() {
-    // let temp = data;
-    // if (activeNode) {
-    //   temp.nodes.forEach(node => {
-    //     if (node.id === activeNode.id) {
-    //       temp.nodes.splice(temp.nodes.indexOf(node), temp.nodes.indexOf(node))
-    //     }
-    //   })
-    //   setData(temp)
-    // }
+  //   let temp = data;
+  //   deleteLogic(temp);
+  //   console.log('TEMP', temp)
+  //   if (activeNode) {
+  //     temp.nodes.forEach(node => {
+  //       if (node.id === activeNode.id) {
+  //         temp.nodes.splice(temp.nodes.indexOf(node), 1)
+  //       }
+  //     })
+  //     // setData(temp)
+  //   }
+  // }
+
+  // function deleteLogic(object) {
+  //   console.log(object)
+  //   let sources = []
+  //   let targets = []
+  //   let replaceIndices = []
+  //   let deleteIndices = []
+  //   let c = 0;
+  //   object.links.forEach(link => {
+  //     if (link.source === activeNode.id) {
+  //       targets.push(link.target)
+  //       deleteIndices.push(c)
+  //     }
+  //     else if (link.target === activeNode.id) {
+  //       sources.push(link.source)
+  //       replaceIndices.push(c)
+  //     }
+  //     c++;
+  //     console.log('object.links', object.links)
+  //   })
+  //   console.log('sources', sources)
+  //   console.log('targets', targets)
+  //   console.log('replaceIndices',replaceIndices)
+
+  //   for (let t = 0; t < targets.length; t++) {
+  //     object.links[replaceIndices[t] + t] = {
+  //       color: '#d2d2d2',
+  //       source: sources[0],
+  //       target: targets[t]
+  //     }
+  //   }
+
+  //   deleteIndices.forEach(index=>{
+  //     object.links.splice(index,1)
+  //   })
+
+  //   console.log(object)
   }
 
   //node completion handler

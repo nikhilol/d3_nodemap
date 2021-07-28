@@ -32,8 +32,8 @@ app.post("/signup", async (req, res) => {
     const { Email, Username, Password } = req.body;
     console.log(Email, Username, Password);
     try {
-        await firebase.firestore().collection("Users").get().then((snap)=>{
-            snap.forEach((doc)=>{
+        await firebase.firestore().collection("Users").get().then((snap) => {
+            snap.forEach((doc) => {
                 console.log(doc.id.toLowerCase());
                 if (doc.id.toLowerCase() === Username.toLowerCase()) {
                     throw Error("Username is already taken");
@@ -46,7 +46,7 @@ app.post("/signup", async (req, res) => {
             displayName: Username,
         });
         let data;
-        await firebase.firestore().collection("Users").doc("Nodemap").collection("Plans").doc("Your first plan!").get().then((doc)=>{
+        await firebase.firestore().collection("Users").doc("Nodemap").collection("Plans").doc("Your first plan!").get().then((doc) => {
             data = doc.data();
             console.log(data);
         });
@@ -96,6 +96,25 @@ app.post("/plans/update", async (req, res) => {
     }
 });
 
+app.post("/plans/import", async (req, res) => {
+    const { user, creator, plan } = req.query;
+
+    console.log(user);
+    console.log(creator);
+    console.log(plan);
+
+    let _data;
+    await firebase.firestore().collection("Users").doc(creator).collection("Plans").doc(plan).get().then((doc) => {
+        if (doc.data()) {
+            _data = doc.data();
+        } else {
+            res.send("Could not find this!");
+        }
+    });
+    await firebase.firestore().collection("Users").doc(user).collection("Plans").doc(plan).set(_data);
+    res.send(200);
+});
+
 app.post("/plans", async (req, res) => {
     const { user, title } = req.query;
     await firebase.firestore().collection("Users").doc(user).collection("Plans").doc(title).set({
@@ -119,7 +138,6 @@ app.post("/plans", async (req, res) => {
     });
     res.send(200);
 });
-
 
 exports.api = functions.https.onRequest(app);
 
