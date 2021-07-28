@@ -71,7 +71,7 @@ const myConfig = {
     "opacity": 1,
     "renderLabel": false,
     "semanticStrokeWidth": false,
-    "strokeWidth": 6,
+    "strokeWidth": 10,
     "markerHeight": 6,
     "markerWidth": 6,
     "strokeDasharray": 0,
@@ -272,7 +272,7 @@ function App(props) {
             temp.nodes[key].y = temp.nodes[key - 1].fy ? temp.nodes[key - 1].fy + 200 : temp.nodes[key - 1].y + 200;
           }
 
-          temp.nodes[key].Platform = platform.replace('.png', '')
+          temp.nodes[key].Platform = platform.split(0, -4)
           temp.nodes[key].svg = `/Logos/${platform}`
           temp.nodes[key].md = `### ${platform.replace('.png', '')} ### \n # ${title} # \n --- `
 
