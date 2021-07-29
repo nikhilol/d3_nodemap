@@ -22,6 +22,7 @@ const app = firebase.initializeApp({
 ReactDOM.render(
   <Router>
     <Switch>
+      <Route path='/demo' component={Demo}></Route>
       <Route exact path='/plan/:user/:plan' component={withRouter(PlanRoute)} />
       <Route exact path='/plan/:user' component={withRouter(UserRoute)} />
       <Route path='/login' component={Login}></Route>
@@ -49,4 +50,8 @@ function UserRoute() {
   if (user) {
     return (<App userID={user}></App>)
   }
+}
+
+function Demo(){
+  return (<App userID='Demo1' plan='Your first plan!' demo></App>)
 }

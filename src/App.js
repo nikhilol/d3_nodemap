@@ -98,7 +98,9 @@ function App(props) {
       if (!props.userID) {
         window.location.assign('/plan/' + user.displayName)
       }
-    } else { window.location.assign('/login') }
+    } 
+    else if(props.userID === 'Demo1' && props.plan){return}
+    else { window.location.assign('/login') }
   })
 
   async function logoutHandler() {
@@ -232,7 +234,7 @@ function App(props) {
 
   //save plan data to firebase
   function Save() {
-    if (data) {
+    if (data && !props.demo) {
       axios({
         method: 'post',
         url: `${RESOURCES.apiURL}/plans/update?user=${props.userID}&title=${props.plan}`,
