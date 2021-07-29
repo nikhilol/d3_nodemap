@@ -89,6 +89,7 @@ function App(props) {
   const [mouseX, setMouseX] = useState(null)
   const [mouseY, setMouseY] = useState(null)
   const [openAddNodeWindow, setOpenAddNodeWindow] = useState(false)
+  const [isEditing, setIsEditing] = useState(false)
   const [openPlanSelector, setOpenPlanSelector] = useState(false)
   const [user, setUser] = useState(null)
 
@@ -349,6 +350,11 @@ function App(props) {
   //   console.log(object)
   }
 
+  function EditNode(platform){
+    updateNodeData(activeNode.id, 'Platform', platform)
+    updateNodeData(activeNode.id, 'svg', '/Logos/'+platform)
+  }
+
   //node completion handler
   function onClickNode(node) {
     console.log(node)
@@ -427,12 +433,12 @@ function App(props) {
                 anchorReference="anchorPosition"
                 anchorPosition={mouseY !== null && mouseX !== null ? { top: mouseY, left: mouseX } : undefined}>
                 <MenuItem onClick={() => { setOpenAddNodeWindow(true); handleContextMenuClose() }}>Add node after active node</MenuItem>
-                <MenuItem onClick={() => { handleContextMenuClose() }}>Edit active node</MenuItem>
+                <MenuItem onClick={() => { setIsEditing(true); setOpenAddNodeWindow(true); handleContextMenuClose() }}>Edit active node</MenuItem>
                 <MenuItem onClick={() => { DeleteNode(); handleContextMenuClose() }}>Delete active node</MenuItem>
               </Menu>
             </div>
             <PlanSelector plans={plans} plan={props.plan} userID={props.userID} open={openPlanSelector} close={() => setOpenPlanSelector(false)}></PlanSelector>
-            <NewNodePopup open={openAddNodeWindow} close={() => setOpenAddNodeWindow(false)} addNode={AddNode}></NewNodePopup>
+            <NewNodePopup open={openAddNodeWindow} close={() => {setOpenAddNodeWindow(false); setIsEditing(false)}} addNode={AddNode} editing={isEditing} EditNode={EditNode}></NewNodePopup>
           </div >
         </>
       }
