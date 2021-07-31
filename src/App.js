@@ -7,7 +7,7 @@ import RESOURCES from './Resources/resources'
 
 import React, { useState, useEffect } from 'react'
 import { Graph } from 'react-d3-graph'
-import { Menu, MenuItem, Button } from '@material-ui/core'
+import { Menu, MenuItem, Button, CircularProgress, Modal } from '@material-ui/core'
 import { EmojiObjects, ExpandMore } from '@material-ui/icons'
 import 'react-markdown-editor-lite/lib/index.css';
 import Editor from "rich-markdown-editor"
@@ -110,7 +110,7 @@ function App(props) {
   }
 
   //helpers top get nodes in a plan
-  function getData() {
+  async function getData() {
     if (reset) {
       return axios.get(`https://us-central1-nodemap-app.cloudfunctions.net/api/plan/nodes/?username=${props.userID}&plan_id=${props.plan}`).then(_d => _d.data)
     } else {
@@ -119,15 +119,17 @@ function App(props) {
   }
 
   //helper to get plan IDs
-  function getPlans() {
-    return axios.get(`${RESOURCES.apiURL}/plans?user=${props.userID}`).then(_d => _d.data)
+  async function getPlans() {
+    return await axios.get(`${RESOURCES.apiURL}/plans?user=${props.userID}`).then(_d => _d.data)
   }
 
   //save when data changes
   useEffect(() => {
-    console.log('NODES', data.nodes)
-    if (data.nodes.length) {
-      Save();
+    if (data) {
+      console.log('NODES', data.nodes)
+      if (data.nodes.length) {
+        Save();
+      }
     }
   }, [data])
 
@@ -153,36 +155,38 @@ function App(props) {
     })
     getData()
       .then(data => {
-        if (reset) {
-          console.log(data)
-          var links = []
-          for (var key in data) {
-
-            data[key].id = data[key].ID;
-            delete data[key].ID;
-
-            data[key].x = data[key].x ? data[key].x : window.innerWidth * 0.3;
-            data[key].y = data[key].y ? data[key].y : window.innerHeight * 0.1 + parseInt(key) * 200
-
-            data[key].svg = `/Logos/${data[key].Platform}`
-            if (!data[key].md) {
-              data[key].md = `### ${data[key].Platform} ### \n # ${data[key].Title} # \n --- `
-            } else {
-
-            }
-            if (key > 0) {
-              links.push({ source: data[key - 1].id, target: data[key].id, color: data[key].IsComplete ? '#72EFDD' : '#D2D2D2' })
-            }
-
-          }
-          console.log(data)
-        }
-        if (mounted) {
+        if (data) {
           if (reset) {
-            setData({ nodes: data, links: links })
-          } else {
-            setData(data.nodes)
-            setActiveNode(data.nodes.nodes[0])
+            console.log(data)
+            var links = []
+            for (var key in data) {
+
+              data[key].id = data[key].ID;
+              delete data[key].ID;
+
+              data[key].x = data[key].x ? data[key].x : window.innerWidth * 0.3;
+              data[key].y = data[key].y ? data[key].y : window.innerHeight * 0.1 + parseInt(key) * 200
+
+              data[key].svg = `/Logos/${data[key].Platform}`
+              if (!data[key].md) {
+                data[key].md = `### ${data[key].Platform} ### \n # ${data[key].Title} # \n --- `
+              } else {
+
+              }
+              if (key > 0) {
+                links.push({ source: data[key - 1].id, target: data[key].id, color: data[key].IsComplete ? '#72EFDD' : '#D2D2D2' })
+              }
+
+            }
+            console.log(data)
+          }
+          if (mounted) {
+            if (reset) {
+              setData({ nodes: data, links: links })
+            } else {
+              setData(data.nodes)
+              setActiveNode(data.nodes.nodes[0])
+            }
           }
         }
       })
@@ -402,8 +406,8 @@ function App(props) {
     try {
       let ref = firebase.storage().ref().child(user ? user.displayName : 'Nodemap' + '/' + file.name)
       let snap = await ref.put(file)
-      if(snap)
-      return await ref.getDownloadURL()
+      if (snap)
+        return await ref.getDownloadURL()
     }
     catch (e) {
       alert(e.message)
@@ -417,6 +421,7 @@ function App(props) {
         <h2 style={{ cursor: 'pointer', position: 'relative', color: 'white', display: 'flex', alignItems: 'center', fontWeight: 'lighter' }} onClick={() => setOpenPlanSelector(true)}>{props.plan}<ExpandMore id='planTitle'></ExpandMore></h2>
         <Button style={{ background: '#ff6666', color: 'white', position: 'absolute', right: '1vh' }} onClick={logoutHandler}>Log out</Button>
       </nav>
+      <Modal open={!data.nodes} style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}><CircularProgress  style={{width:'5vw', height:'5vw', outline:'none' }}></CircularProgress></Modal>
       {data &&
         <>
           <div style={{ display: 'flex', height: '95vh' }} className="App">
