@@ -14,7 +14,7 @@ function PlanSelector(props) {
     const [addNewPlanPopupOpen, setAddNewPlanPopupOpen] = useState(false);
 
     return (
-        <>
+        <div>
             {props.plans &&
                 <Menu
                     id="simple-menu"
@@ -35,13 +35,13 @@ function PlanSelector(props) {
                             )
                         })
                     }
-                    <Divider></Divider>
-                    <Button fullWidth onClick={() => { setAddNewPlanPopupOpen(true); props.close() }}>+ Add new plan</Button>
+                    <Divider  style={{margin:'1vh'}}></Divider>
+                    <Button style={{color:'white', backgroundColor:'#6930C3', margin:'0vh 1vh'}} onClick={() => { setAddNewPlanPopupOpen(true); props.close() }}>+ Add new plan</Button>
                 </Menu>
 
             }
             <AddNewPlanPopup open={addNewPlanPopupOpen} close={() => setAddNewPlanPopupOpen(false)}></AddNewPlanPopup>
-        </>
+        </div>
     )
 }
 

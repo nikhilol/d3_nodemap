@@ -99,8 +99,8 @@ function App(props) {
       if (!props.userID) {
         window.location.assign('/plan/' + user.displayName)
       }
-    } 
-    else if(props.userID === 'Demo1' && props.plan){return}
+    }
+    else if (props.userID === 'Demo1' && props.plan) { return }
     else { window.location.assign('/login') }
   })
 
@@ -299,60 +299,60 @@ function App(props) {
 
   //Delete node to plan
   function DeleteNode() {
-  //   let temp = data;
-  //   deleteLogic(temp);
-  //   console.log('TEMP', temp)
-  //   if (activeNode) {
-  //     temp.nodes.forEach(node => {
-  //       if (node.id === activeNode.id) {
-  //         temp.nodes.splice(temp.nodes.indexOf(node), 1)
-  //       }
-  //     })
-  //     // setData(temp)
-  //   }
-  // }
+    //   let temp = data;
+    //   deleteLogic(temp);
+    //   console.log('TEMP', temp)
+    //   if (activeNode) {
+    //     temp.nodes.forEach(node => {
+    //       if (node.id === activeNode.id) {
+    //         temp.nodes.splice(temp.nodes.indexOf(node), 1)
+    //       }
+    //     })
+    //     // setData(temp)
+    //   }
+    // }
 
-  // function deleteLogic(object) {
-  //   console.log(object)
-  //   let sources = []
-  //   let targets = []
-  //   let replaceIndices = []
-  //   let deleteIndices = []
-  //   let c = 0;
-  //   object.links.forEach(link => {
-  //     if (link.source === activeNode.id) {
-  //       targets.push(link.target)
-  //       deleteIndices.push(c)
-  //     }
-  //     else if (link.target === activeNode.id) {
-  //       sources.push(link.source)
-  //       replaceIndices.push(c)
-  //     }
-  //     c++;
-  //     console.log('object.links', object.links)
-  //   })
-  //   console.log('sources', sources)
-  //   console.log('targets', targets)
-  //   console.log('replaceIndices',replaceIndices)
+    // function deleteLogic(object) {
+    //   console.log(object)
+    //   let sources = []
+    //   let targets = []
+    //   let replaceIndices = []
+    //   let deleteIndices = []
+    //   let c = 0;
+    //   object.links.forEach(link => {
+    //     if (link.source === activeNode.id) {
+    //       targets.push(link.target)
+    //       deleteIndices.push(c)
+    //     }
+    //     else if (link.target === activeNode.id) {
+    //       sources.push(link.source)
+    //       replaceIndices.push(c)
+    //     }
+    //     c++;
+    //     console.log('object.links', object.links)
+    //   })
+    //   console.log('sources', sources)
+    //   console.log('targets', targets)
+    //   console.log('replaceIndices',replaceIndices)
 
-  //   for (let t = 0; t < targets.length; t++) {
-  //     object.links[replaceIndices[t] + t] = {
-  //       color: '#d2d2d2',
-  //       source: sources[0],
-  //       target: targets[t]
-  //     }
-  //   }
+    //   for (let t = 0; t < targets.length; t++) {
+    //     object.links[replaceIndices[t] + t] = {
+    //       color: '#d2d2d2',
+    //       source: sources[0],
+    //       target: targets[t]
+    //     }
+    //   }
 
-  //   deleteIndices.forEach(index=>{
-  //     object.links.splice(index,1)
-  //   })
+    //   deleteIndices.forEach(index=>{
+    //     object.links.splice(index,1)
+    //   })
 
-  //   console.log(object)
+    //   console.log(object)
   }
 
-  function EditNode(platform){
+  function EditNode(platform) {
     updateNodeData(activeNode.id, 'Platform', platform)
-    updateNodeData(activeNode.id, 'svg', '/Logos/'+platform)
+    updateNodeData(activeNode.id, 'svg', '/Logos/' + platform)
   }
 
   //node completion handler
@@ -398,6 +398,19 @@ function App(props) {
     setMouseY(null)
   }
 
+  async function uploadImage(file) {
+    try {
+      let ref = firebase.storage().ref().child(user ? user.displayName : 'Nodemap' + '/' + file.name)
+      let snap = await ref.put(file)
+      if(snap)
+      return await ref.getDownloadURL()
+    }
+    catch (e) {
+      alert(e.message)
+      return
+    }
+  }
+
   return (
     <div style={{ margin: 0, padding: 0 }} className='App'>
       <nav style={{ height: '5vh', background: '#2b2b2b', display: 'flex', justifyContent: 'center', alignItems: 'center' }} className="App">
@@ -412,7 +425,9 @@ function App(props) {
                 style={{ width: '100%', height: '100%', textAlign: 'left', background: '#FFF', borderRight: '1px solid #d2d3d4' }}
                 value={activeNode ? activeNode.md : 'test'}
                 defaultValue={activeNode ? activeNode.md : "# Hover over the start node for help with creating your plan #"}
-                onChange={handleEditorChange}>
+                onChange={handleEditorChange}
+                uploadImage={uploadImage}
+              >
               </Editor>
             </div>
             <div onContextMenu={(e) => handleNodeRightClick(e)} style={{ width: '70vw', position: 'relative', marginLeft: '10vh', cursor: 'grab', background: '#F7F6F2', backgroundImage: 'radial-gradient(#d2d2d2 1px, transparent 0)', backgroundSize: '1vw 1vw', backgroundPosition: '-0.5vw -0.5vw' }}>
@@ -438,7 +453,7 @@ function App(props) {
               </Menu>
             </div>
             <PlanSelector plans={plans} plan={props.plan} userID={props.userID} open={openPlanSelector} close={() => setOpenPlanSelector(false)}></PlanSelector>
-            <NewNodePopup open={openAddNodeWindow} close={() => {setOpenAddNodeWindow(false); setIsEditing(false)}} addNode={AddNode} editing={isEditing} EditNode={EditNode}></NewNodePopup>
+            <NewNodePopup open={openAddNodeWindow} close={() => { setOpenAddNodeWindow(false); setIsEditing(false) }} addNode={AddNode} editing={isEditing} EditNode={EditNode}></NewNodePopup>
           </div >
         </>
       }
