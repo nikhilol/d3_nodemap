@@ -1,14 +1,14 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import './App.css';
 import PlanSelector from './PlanSelector'
-import logo from './logo.svg';
 import NewNodePopup from './NewNodePopup'
 import RESOURCES from './Resources/resources'
+import RegisterModal from './RegisterModal';
 
 import React, { useState, useEffect } from 'react'
 import { Graph } from 'react-d3-graph'
 import { Menu, MenuItem, Button, CircularProgress, Modal } from '@material-ui/core'
-import { EmojiObjects, ExpandMore } from '@material-ui/icons'
+import { ExpandMore } from '@material-ui/icons'
 import 'react-markdown-editor-lite/lib/index.css';
 import Editor from "rich-markdown-editor"
 const axios = require('axios')
@@ -92,6 +92,7 @@ function App(props) {
   const [isEditing, setIsEditing] = useState(false)
   const [openPlanSelector, setOpenPlanSelector] = useState(false)
   const [user, setUser] = useState(null)
+  const [register, setRegister] = useState(false)
 
   firebase.auth().onAuthStateChanged((user) => {
     if (user) {
@@ -415,12 +416,22 @@ function App(props) {
     }
   }
 
+
+
   return (
     <div style={{ margin: 0, padding: 0 }} className='App'>
       <nav style={{ height: '5vh', background: '#2b2b2b', display: 'flex', justifyContent: 'center', alignItems: 'center' }} className="App">
         <h2 style={{ cursor: 'pointer', position: 'relative', color: 'white', display: 'flex', alignItems: 'center', fontWeight: 'lighter' }} onClick={() => setOpenPlanSelector(true)}>{props.plan}<ExpandMore id='planTitle'></ExpandMore></h2>
+        {user ?
         <Button style={{ background: '#ff6666', color: 'white', position: 'absolute', right: '1vh' }} onClick={logoutHandler}>Log out</Button>
+        : 
+        props.demo ?
+        <Button style={{ background: '#ff6666', color: 'white', position: 'absolute', right: '1vh' }} onClick={()=>setRegister(true)}>Sign up</Button>
+        : 
+        <Button style={{ background: '#ff6666', color: 'white', position: 'absolute', right: '1vh' }} onClick={()=>setRegister(true)}>Log in</Button>
+      }
       </nav>
+      <RegisterModal open={register} close={()=>setRegister(false)}></RegisterModal>
       <Modal open={!data.nodes} style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}><CircularProgress  style={{width:'5vw', height:'5vw', outline:'none' }}></CircularProgress></Modal>
       {data &&
         <>
