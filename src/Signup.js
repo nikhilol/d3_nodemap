@@ -19,7 +19,7 @@ export function Signup() {
     async function signupHandler() {
         if (document.getElementById('Password').value === document.getElementById('RepeatPassword').value) {
             try {
-                const res = await axios.post(`${RESOURCES.apiURL}/signup`, { Email: document.getElementById('Email').value, Username: document.getElementById('Username').value, Password: document.getElementById('Password').value })
+                const res = await axios.post(`${RESOURCES.apiURL}/signup?Email=${document.getElementById('Email').value}&Username=${document.getElementById('Username').value}&Password=${document.getElementById('Password').value}`)
                 await firebase.default.auth().signInWithEmailAndPassword(document.getElementById('Email').value, document.getElementById('Password').value);
                 await firebase.default.auth().setPersistence(firebase.default.auth.Auth.Persistence.LOCAL)
                 window.location.assign(`/plan/${firebase.default.auth().currentUser.displayName}`)

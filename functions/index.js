@@ -6,6 +6,7 @@ const functions = require("firebase-functions");
 const express = require("express");
 const cors = require("cors");
 const firebase = require("firebase-admin");
+const { Client } = require("@notionhq/client");
 
 firebase.initializeApp({
     apiKey: "AIzaSyCUzsoeXiMaMNekQnH-nK8pZkvcmfttVSI",
@@ -16,6 +17,8 @@ firebase.initializeApp({
     appId: "1:1066002610989:web:6136fbcaf16554fb4031a4",
     measurementId: "G-6NN3D93WVH",
 });
+
+const notion = new Client({ auth: "secret_qFHmY8UZ0H1RsexDyedFHicyeSZ41Q0CVYnL9qvmtGp" });
 
 // // Create and Deploy Your First Cloud Functions
 // // https://firebase.google.com/docs/functions/write-firebase-functions
@@ -29,8 +32,7 @@ const app = express();
 app.use(cors());
 
 app.post("/signup", async (req, res) => {
-    const { Email, Username, Password } = req.body;
-    console.log(Email, Username, Password);
+    const { Email, Username, Password } = req.query;
     try {
         await firebase.firestore().collection("Users").get().then((snap) => {
             snap.forEach((doc) => {
@@ -104,6 +106,7 @@ app.post("/plans/import", async (req, res) => {
     console.log(plan);
 
     let _data;
+    try {
     await firebase.firestore().collection("Users").doc(creator).collection("Plans").doc(plan).get().then((doc) => {
         if (doc.data()) {
             _data = doc.data();
@@ -112,7 +115,15 @@ app.post("/plans/import", async (req, res) => {
         }
     });
     await firebase.firestore().collection("Users").doc(user).collection("Plans").doc(plan).set(_data);
+    await firebase.firestore().collection("Users").doc(creator).collection("Plans").doc(plan).collection("Analytics").doc("Imports").set(
+        {
+            Count: firebase.firestore.FieldValue.increment(1),
+        }, {merge: true},
+    );
     res.send(200);
+    } catch (e) {
+        res.send(e);
+    }
 });
 
 app.post("/plans", async (req, res) => {
@@ -141,4 +152,59 @@ app.post("/plans", async (req, res) => {
 
 exports.api = functions.https.onRequest(app);
 
+exports.automation = functions.auth.user().onCreate(async (user) => {
+    const response = await notion.pages.create({
+        parent: {
+            type: "database_id",
+            database_id: "72266aa573454aa3b8a4db8e55481cb1",
+        },
+        properties: {
+            "Username": {
+                title: [
+                    {
+                        text: {
+                            content: user.displayName,
+                        },
+                    },
+                ],
+            },
+            "Account Type": {
+                select: {
+                    name: "User",
+                },
+            },
+            "Email": {
+                email: user.email,
+            },
+            "Joined": {
+                "date": {
+                    "start": new Date().toISOString(),
+                },
+            },
+        },
+    });
+    console.log(response);
+});
 
+exports.creators = functions.firestore.document("Users/{userId}/Plans/{plan}/Analytics/Imports").onCreate(async (snap, context) => {
+    await firebase.firestore().collection("Users").doc(context.params.userId).set({ type: "Creator" }, { merge: true });
+    const query = await notion.databases.query({
+        database_id: "72266aa573454aa3b8a4db8e55481cb1",
+        filter: {
+            property: "Username",
+            text: {
+                equals: context.params.userId,
+            },
+        },
+    });
+    notion.pages.update({
+        page_id: query.results[0].id,
+        properties: {
+            "Account Type": {
+                select: {
+                    name: "Creator",
+                },
+            },
+        },
+    });
+});

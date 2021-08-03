@@ -426,9 +426,9 @@ function App(props) {
         <Button style={{ background: '#ff6666', color: 'white', position: 'absolute', right: '1vh' }} onClick={logoutHandler}>Log out</Button>
         : 
         props.demo ?
-        <Button style={{ background: '#ff6666', color: 'white', position: 'absolute', right: '1vh' }} onClick={()=>setRegister(true)}>Sign up</Button>
+        <Button style={{ background: '#6930C3', color: 'white', position: 'absolute', right: '1vh' }} onClick={()=>setRegister(true)}>Sign up</Button>
         : 
-        <Button style={{ background: '#ff6666', color: 'white', position: 'absolute', right: '1vh' }} onClick={()=>setRegister(true)}>Log in</Button>
+        <Button style={{ background: '#6930C3', color: 'white', position: 'absolute', right: '1vh' }} onClick={()=>setRegister(true)}>Log in</Button>
       }
       </nav>
       <RegisterModal open={register} close={()=>setRegister(false)}></RegisterModal>

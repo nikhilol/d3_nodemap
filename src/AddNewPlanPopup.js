@@ -21,7 +21,7 @@ export default function AddNewPlanPopup(props) {
         let split = importValue.split('/')
         let plan = split[split.length - 1];
         let creator = split[split.length - 2];
-        let res = await axios.post(`${RESOURCES.apiURL}/plans?user=${firebase.auth().currentUser.displayName}&creator=${creator}&title=${plan}`)
+        let res = await axios.post(`${RESOURCES.apiURL}/plans/import?user=${firebase.auth().currentUser.displayName}&creator=${creator}&plan=${plan}`)
         if(res.status === 200){
             window.location.assign(`/plan/${firebase.auth().currentUser.displayName}/${plan}`)
         } else alert('There was a problem adding this plan!')
