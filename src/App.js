@@ -377,7 +377,15 @@ function App(props) {
 
   //set active node on hover
   function onHoverNode(nodeId, node) {
+    const previous = activeNode
     setActiveNode(node)
+    const el = document.getElementById(node.id).firstChild
+    el.style.transition = '1s'
+    el.style.transform = 'translate(-33.3333px, -33.3333px) scale(1.5)'
+    if (previous.id !== node.id) {
+      const prev = document.getElementById(previous.id).firstChild
+      prev.style.transform = 'translate(0px, 0px) scale(1)'
+    }
     console.log(node)
   };
 
@@ -423,16 +431,16 @@ function App(props) {
       <nav style={{ height: '5vh', background: '#2b2b2b', display: 'flex', justifyContent: 'center', alignItems: 'center' }} className="App">
         <h2 style={{ cursor: 'pointer', position: 'relative', color: 'white', display: 'flex', alignItems: 'center', fontWeight: 'lighter' }} onClick={() => setOpenPlanSelector(true)}>{props.plan}<ExpandMore id='planTitle'></ExpandMore></h2>
         {user ?
-        <Button style={{ background: '#ff6666', color: 'white', position: 'absolute', right: '1vh' }} onClick={logoutHandler}>Log out</Button>
-        : 
-        props.demo ?
-        <Button style={{ background: '#6930C3', color: 'white', position: 'absolute', right: '1vh' }} onClick={()=>setRegister(true)}>Sign up</Button>
-        : 
-        <Button style={{ background: '#6930C3', color: 'white', position: 'absolute', right: '1vh' }} onClick={()=>setRegister(true)}>Log in</Button>
-      }
+          <Button style={{ background: '#ff6666', color: 'white', position: 'absolute', right: '1vh' }} onClick={logoutHandler}>Log out</Button>
+          :
+          props.demo ?
+            <Button style={{ background: '#6930C3', color: 'white', position: 'absolute', right: '1vh' }} onClick={() => setRegister(true)}>Sign up</Button>
+            :
+            <Button style={{ background: '#6930C3', color: 'white', position: 'absolute', right: '1vh' }} onClick={() => setRegister(true)}>Log in</Button>
+        }
       </nav>
-      <RegisterModal open={register} close={()=>setRegister(false)}></RegisterModal>
-      <Modal open={!data.nodes} style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}><CircularProgress  style={{width:'5vw', height:'5vw', outline:'none' }}></CircularProgress></Modal>
+      <RegisterModal open={register} close={() => setRegister(false)}></RegisterModal>
+      <Modal open={!data.nodes} style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}><CircularProgress style={{ width: '5vw', height: '5vw', outline: 'none' }}></CircularProgress></Modal>
       {data &&
         <>
           <div style={{ display: 'flex', height: '95vh' }} className="App">
@@ -443,6 +451,16 @@ function App(props) {
                 defaultValue={activeNode ? activeNode.md : "# Hover over the start node for help with creating your plan #"}
                 onChange={handleEditorChange}
                 uploadImage={uploadImage}
+                embeds={[
+                  {
+                    title: "Google Doc",
+                    keywords: "google docs gdocs",
+                    defaultHidden: false,
+                    matcher: href => href.match(/www.youtube.com\/embed\//i),
+                    href: href => href,
+                    component: Video
+                  }
+                ]}
               >
               </Editor>
             </div>
@@ -476,5 +494,21 @@ function App(props) {
     </div>
   );
 }
+
+const Video = (props) => {
+  return (
+    <div style={{display:'flex', justifyContent:'center'}}>
+      <iframe style={{ height:'32vh', padding:'0', margin:0 }} title='video'
+        src={props.attrs.href}
+        allowfullscreen="allowfullscreen"
+        mozallowfullscreen="mozallowfullscreen" 
+        msallowfullscreen="msallowfullscreen" 
+        oallowfullscreen="oallowfullscreen" 
+        webkitallowfullscreen="webkitallowfullscreen">
+      </iframe>
+    </div>
+  )
+}
+
 
 export default App;
