@@ -21,6 +21,7 @@ function PlanSelector(props) {
                     anchorEl={document.getElementById('planTitle')}
                     open={props.open}
                     onClose={props.close}
+                    elevation={3}
                 >
                     {
 

@@ -7,7 +7,7 @@ import RegisterModal from './RegisterModal';
 
 import React, { useState, useEffect } from 'react'
 import { Graph } from 'react-d3-graph'
-import { Menu, MenuItem, Button, CircularProgress, Modal } from '@material-ui/core'
+import { Menu, MenuItem, Button, CircularProgress, Modal, Popper, Paper } from '@material-ui/core'
 import { ExpandMore, Timeline } from '@material-ui/icons'
 import 'react-markdown-editor-lite/lib/index.css';
 import Editor from "rich-markdown-editor"
@@ -93,6 +93,8 @@ function App(props) {
   const [openPlanSelector, setOpenPlanSelector] = useState(false)
   const [user, setUser] = useState(null)
   const [register, setRegister] = useState(false)
+  const [analyticsOpen, setAnalyticsOpen] = useState(false)
+  const [downloads, setDownloads] = useState(1093487)
 
   firebase.auth().onAuthStateChanged((user) => {
     if (user) {
@@ -428,8 +430,8 @@ function App(props) {
 
   return (
     <div style={{ margin: 0, padding: 0 }} className='App'>
-      <nav style={{ height: '5vh', background: '#fff', borderBottom:'1px solid #e5e5e5', display: 'flex', justifyContent: 'center', alignItems: 'center' }} className="App">
-        <h2 style={{ cursor: 'pointer', position: 'relative', color: '#b2b2b2', display: 'flex', alignItems: 'center', fontWeight: 'lighter' }} onClick={() => setOpenPlanSelector(true)}>{props.plan}<ExpandMore id='planTitle'></ExpandMore></h2>
+      <nav style={{ height: '5vh', background: '#F5F5F5', borderBottom: '1px solid #e5e5e5', display: 'flex', justifyContent: 'center', alignItems: 'center' }} className="App">
+        <h2 style={{ cursor: 'pointer', position: 'relative', color: '#2b2b2b', display: 'flex', alignItems: 'center', fontWeight: 'lighter' }} onClick={() => setOpenPlanSelector(true)}>{props.plan}<ExpandMore id='planTitle'></ExpandMore></h2>
         {user ?
           <Button style={{ background: '#ff6666', color: 'white', position: 'absolute', right: '1vh' }} onClick={logoutHandler}>Log out</Button>
           :
@@ -444,7 +446,7 @@ function App(props) {
       {data &&
         <>
           <div style={{ display: 'flex', height: '95vh' }} className="App">
-            <div style={{ height: '100%', position: 'relative', width: '30vw', borderRight:'1px solid #e5e5e5' }} spellCheck='false'>
+            <div style={{ height: '100%', position: 'relative', width: '30vw', borderRight: '1px solid #e5e5e5' }} spellCheck='false'>
               <Editor
                 style={{ width: '100%', height: '100%', textAlign: 'left', background: '#FFF', borderRight: '1px solid #d2d3d4' }}
                 value={activeNode ? activeNode.md : 'test'}
@@ -465,6 +467,17 @@ function App(props) {
               </Editor>
             </div>
             <div onContextMenu={(e) => handleNodeRightClick(e)} style={{ width: '70vw', position: 'relative', marginLeft: '10vh', cursor: 'grab', background: '#F7F6F3', backgroundImage: 'radial-gradient(#d2d2d2 1px, transparent 0)', backgroundSize: '1vw 1vw', backgroundPosition: '-0.5vw -0.5vw' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', position: 'absolute', top: '2vh', left: '2vh', }}>
+                <Button className='Analytics' id='Analytics' onMouseLeave={() => setAnalyticsOpen(false)} onClick={() => setAnalyticsOpen(true)}><Timeline fontSize='large' style={{}} ></Timeline><div className='inner' style={{ width: '0', overflow: 'hidden', opacity: 0 }}>Analytics</div></Button>
+                <Popper open={analyticsOpen} anchorEl={document.getElementById('Analytics')} placement='right-start' style={{ marginLeft: '1vh', width: 'auto', minWidth: '10vw', height: '10vw', background: 'white', borderRadius: '10px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent:'center', height:'100%' }}>
+                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent:'center' }}>
+                      <div>Imports</div>
+                      <h1  style={{fontWeight:'lighter'}}>{downloads}</h1>
+                    </div>
+                  </div>
+                </Popper>
+              </div>
               <Graph
                 id="graph_id"
                 data={data}
@@ -483,7 +496,7 @@ function App(props) {
                 anchorPosition={mouseY !== null && mouseX !== null ? { top: mouseY, left: mouseX } : undefined}>
                 <MenuItem onClick={() => { setOpenAddNodeWindow(true); handleContextMenuClose() }}>Add node after active node</MenuItem>
                 <MenuItem onClick={() => { setIsEditing(true); setOpenAddNodeWindow(true); handleContextMenuClose() }}>Edit active node</MenuItem>
-                <MenuItem onClick={() => { DeleteNode(); handleContextMenuClose() }}>Delete active node</MenuItem>
+                {/* <MenuItem onClick={() => { DeleteNode(); handleContextMenuClose() }}>Delete active node</MenuItem> */}
               </Menu>
             </div>
             <PlanSelector plans={plans} plan={props.plan} userID={props.userID} open={openPlanSelector} close={() => setOpenPlanSelector(false)}></PlanSelector>
@@ -491,20 +504,19 @@ function App(props) {
           </div >
         </>
       }
-      <Button className='Analytics' style={{position:'absolute', bottom:'2vh', right:'2vh', borderRadius: '20%/50%', padding:'1vh'}}><div className='inner' style={{width: '0', overflow:'hidden', opacity:0, marginLeft:'20px'}}>Analytics</div><Timeline fontSize='large' style={{marginLeft:'1vh'}}></Timeline></Button>
     </div>
   );
 }
 
 const Video = (props) => {
   return (
-    <div style={{display:'flex', justifyContent:'center'}}>
-      <iframe style={{ height:'32vh', padding:'0', margin:0 }} title='video'
+    <div style={{ display: 'flex', justifyContent: 'center' }}>
+      <iframe style={{ height: '32vh', padding: '0', margin: 0 }} title='video'
         src={props.attrs.href}
         allowfullscreen="allowfullscreen"
-        mozallowfullscreen="mozallowfullscreen" 
-        msallowfullscreen="msallowfullscreen" 
-        oallowfullscreen="oallowfullscreen" 
+        mozallowfullscreen="mozallowfullscreen"
+        msallowfullscreen="msallowfullscreen"
+        oallowfullscreen="oallowfullscreen"
         webkitallowfullscreen="webkitallowfullscreen">
       </iframe>
     </div>
