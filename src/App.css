@@ -52,11 +52,11 @@ g .node image:hover {
 
 .rc-md-editor {
   text-align: left;
-  background-color: rgb(247, 246, 242);
+  background-color: rgb(250, 250, 249, 0.596);
 }
 
 .section-container {
-  background: rgb(250, 250, 249);
+  background: rgba(250, 250, 249, 0.596);
   color: white;
   width: 70vw !important;
   word-wrap: break-word;
@@ -64,6 +64,7 @@ g .node image:hover {
 
 .sc-bdnxRM {
   padding: 0 5vh;
+  background-color: #f9f9f9;
 }
 
 .sc-hHEiqL {
