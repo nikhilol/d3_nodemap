@@ -97,3 +97,9 @@ a {
   color: black;
   text-decoration: none;
 }
+
+.Analytics:hover .inner {
+  opacity: 1 !important;
+  width: auto !important;
+  transition: 0.25s;
+}

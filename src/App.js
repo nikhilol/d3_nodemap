@@ -8,7 +8,7 @@ import RegisterModal from './RegisterModal';
 import React, { useState, useEffect } from 'react'
 import { Graph } from 'react-d3-graph'
 import { Menu, MenuItem, Button, CircularProgress, Modal } from '@material-ui/core'
-import { ExpandMore } from '@material-ui/icons'
+import { ExpandMore, Timeline } from '@material-ui/icons'
 import 'react-markdown-editor-lite/lib/index.css';
 import Editor from "rich-markdown-editor"
 const axios = require('axios')
@@ -380,7 +380,7 @@ function App(props) {
     const previous = activeNode
     setActiveNode(node)
     const el = document.getElementById(node.id).firstChild
-    el.style.transition = '1s'
+    el.style.transition = '0.25s'
     el.style.transform = 'translate(-33.3333px, -33.3333px) scale(1.5)'
     if (previous.id !== node.id) {
       const prev = document.getElementById(previous.id).firstChild
@@ -491,6 +491,7 @@ function App(props) {
           </div >
         </>
       }
+      <Button className='Analytics' style={{position:'absolute', bottom:'2vh', right:'2vh', borderRadius: '20%/50%', padding:'1vh'}}><div className='inner' style={{width: '0', overflow:'hidden', opacity:0, marginLeft:'20px'}}>Analytics</div><Timeline fontSize='large' style={{marginLeft:'1vh'}}></Timeline></Button>
     </div>
   );
 }
