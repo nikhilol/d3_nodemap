@@ -1,6 +1,7 @@
-import React, { useState } from 'react'
+import React, { useContext, useState } from 'react'
 import { Button, Dialog, DialogActions, TextField } from '@material-ui/core'
 import RESOURCES from './Resources/resources'
+import { PopupManager, setPopupState } from './PopupManager'
 
 const axios = require('axios')
 const firebase = require('firebase').default
@@ -9,6 +10,7 @@ export default function AddNewPlanPopup(props) {
 
     const [addValue, setAddvalue] = useState("")
     const [importValue, setImportvalue] = useState("")
+    const {popups, setPopups} = useContext(PopupManager)
 
     async function Add() {
         let res = await axios.post(`${RESOURCES.apiURL}/plans?user=${firebase.auth().currentUser.displayName}&title=${addValue}`)
@@ -28,7 +30,7 @@ export default function AddNewPlanPopup(props) {
     }
 
     return (
-        <Dialog open={props.open} fullWidth maxWidth="md">
+        <Dialog open={popups.AddPlan} fullWidth maxWidth="md">
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', margin: '10vh' }}>
                 <h3>Create a new custom plan by giving it a title:</h3>
                 <div style={{ display: 'flex', width: '100%' }}>
@@ -42,7 +44,7 @@ export default function AddNewPlanPopup(props) {
                 </div>
             </div>
             <DialogActions>
-                <Button onClick={() => props.close()}>Cancel</Button>
+                <Button onClick={() => setPopups(setPopupState('AddPlan', false, popups))}>Cancel</Button>
             </DialogActions>
         </Dialog>
     )

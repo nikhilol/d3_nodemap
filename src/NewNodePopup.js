@@ -1,14 +1,16 @@
-import React, { useState } from 'react'
+import React, { useContext, useState } from 'react'
 import { Dialog, DialogContent, DialogTitle, Divider, DialogActions, Button, TextField } from '@material-ui/core'
 import NewNodeSearchSelector from './NewNodeSearchSelector'
+import { PopupManager, setPopupState } from './PopupManager'
 
 export default function NewPlanPopup(props) {
 
-    const [open, setOpen] = useState(props.open)
     const [platform, setPlatform] = useState(null)
     const [title, setTitle] = useState(null)
     const [platformError, setPlatformError] = useState(false)
     const [titleError, setTitleError] = useState(false)
+
+    const {popups, setPopups} = useContext(PopupManager)
 
     function save() {
         setPlatformError(!platform)
@@ -20,12 +22,12 @@ export default function NewPlanPopup(props) {
             } else {
                 props.addNode(platform, title);
             }
-            props.close()
+            setPopups(setPopupState('AddNode', false, popups))
         }
     }
 
     return (
-        <Dialog open={props.open | open} maxWidth='md' fullWidth>
+        <Dialog open={popups.AddNode} maxWidth='md' fullWidth>
             <DialogTitle style={{ background: '#2b2b2b', color: 'white' }}>Select your new node</DialogTitle>
             <Divider />
             <DialogContent style={{ minHeight: '60vh', maxHeight: '60vh' }}>
@@ -47,7 +49,7 @@ export default function NewPlanPopup(props) {
             </DialogContent>
             <Divider></Divider>
             <DialogActions>
-                <Button onClick={() => props.close()}>Cancel</Button>
+                <Button onClick={() => setPopups(setPopupState('AddNode', false, popups))}>Cancel</Button>
                 <Button onClick={save}>{props.editing ? 'Save' : 'Add'}</Button>
             </DialogActions>
         </Dialog>

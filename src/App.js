@@ -6,6 +6,7 @@ import RESOURCES from './Resources/resources'
 import RegisterModal from './RegisterModal';
 
 import React, { useState, useEffect } from 'react'
+import { PopupManager, setPopupState } from './PopupManager';
 import { Graph } from 'react-d3-graph'
 import { Menu, MenuItem, Button, CircularProgress, Modal, Popper, Paper } from '@material-ui/core'
 import { ExpandMore, Timeline } from '@material-ui/icons'
@@ -88,13 +89,17 @@ function App(props) {
   const [mdValue, setMdValue] = useState([])
   const [mouseX, setMouseX] = useState(null)
   const [mouseY, setMouseY] = useState(null)
-  const [openAddNodeWindow, setOpenAddNodeWindow] = useState(false)
   const [isEditing, setIsEditing] = useState(false)
-  const [openPlanSelector, setOpenPlanSelector] = useState(false)
   const [user, setUser] = useState(null)
-  const [register, setRegister] = useState(false)
-  const [analyticsOpen, setAnalyticsOpen] = useState(false)
   const [downloads, setDownloads] = useState(1093487)
+
+  const [popups, setPopups] = useState({
+    AddNode: false,
+    PlanSelector: false,
+    AddPlan: false,
+    Register: false,
+    Analytics: false  
+  })
 
   firebase.auth().onAuthStateChanged((user) => {
     if (user) {
@@ -431,79 +436,82 @@ function App(props) {
   return (
     <div style={{ margin: 0, padding: 0 }} className='App'>
       <nav style={{ height: '5vh', background: '#F5F5F5', borderBottom: '1px solid #e5e5e5', display: 'flex', justifyContent: 'center', alignItems: 'center' }} className="App">
-        <h2 style={{ cursor: 'pointer', position: 'relative', color: '#2b2b2b', display: 'flex', alignItems: 'center', fontWeight: 'lighter' }} onClick={() => setOpenPlanSelector(true)}>{props.plan}<ExpandMore id='planTitle'></ExpandMore></h2>
+        <h2 style={{ cursor: 'pointer', position: 'relative', color: '#2b2b2b', display: 'flex', alignItems: 'center', fontWeight: 'lighter' }} onClick={() => setPopups(setPopupState('PlanSelector', true, popups))}>{props.plan}<ExpandMore id='planTitle'></ExpandMore></h2>
         {user ?
           <Button style={{ background: '#ff6666', color: 'white', position: 'absolute', right: '1vh' }} onClick={logoutHandler}>Log out</Button>
           :
           props.demo ?
-            <Button style={{ background: '#6930C3', color: 'white', position: 'absolute', right: '1vh' }} onClick={() => setRegister(true)}>Sign up</Button>
+            <Button style={{ background: '#6930C3', color: 'white', position: 'absolute', right: '1vh' }} onClick={() => setPopups(setPopupState('Register', true, popups))}>Sign up</Button>
             :
-            <Button style={{ background: '#6930C3', color: 'white', position: 'absolute', right: '1vh' }} onClick={() => setRegister(true)}>Log in</Button>
+            <Button style={{ background: '#6930C3', color: 'white', position: 'absolute', right: '1vh' }} onClick={() => setPopups(setPopupState('Register', true, popups))}>Log in</Button>
         }
       </nav>
-      <RegisterModal open={register} close={() => setRegister(false)}></RegisterModal>
-      <Modal open={!data.nodes} style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}><CircularProgress style={{ width: '5vw', height: '5vw', outline: 'none' }}></CircularProgress></Modal>
-      {data &&
-        <>
-          <div style={{ display: 'flex', height: '95vh' }} className="App">
-            <div style={{ height: '100%', position: 'relative', width: '30vw', borderRight: '1px solid #e5e5e5' }} spellCheck='false'>
-              <Editor
-                style={{ width: '100%', height: '100%', textAlign: 'left', background: '#FFF', borderRight: '1px solid #d2d3d4' }}
-                value={activeNode ? activeNode.md : 'test'}
-                defaultValue={activeNode ? activeNode.md : "# Hover over the start node for help with creating your plan #"}
-                onChange={handleEditorChange}
-                uploadImage={uploadImage}
-                embeds={[
-                  {
-                    title: "Google Doc",
-                    keywords: "google docs gdocs",
-                    defaultHidden: false,
-                    matcher: href => href.match(/www.youtube.com\/embed\//i),
-                    href: href => href,
-                    component: Video
-                  }
-                ]}
-              >
-              </Editor>
-            </div>
-            <div onContextMenu={(e) => handleNodeRightClick(e)} style={{ width: '70vw', position: 'relative', marginLeft: '10vh', cursor: 'grab', background: '#F7F6F3', backgroundImage: 'radial-gradient(#d2d2d2 1px, transparent 0)', backgroundSize: '1vw 1vw', backgroundPosition: '-0.5vw -0.5vw' }}>
-              <div style={{ display: 'flex', flexDirection: 'column', position: 'absolute', top: '2vh', left: '2vh', }}>
-                <Button className='Analytics' id='Analytics' onMouseLeave={() => setAnalyticsOpen(false)} onClick={() => setAnalyticsOpen(true)}><Timeline fontSize='large' style={{}} ></Timeline><div className='inner' style={{ width: '0', overflow: 'hidden', opacity: 0 }}>Analytics</div></Button>
-                <Popper open={analyticsOpen} anchorEl={document.getElementById('Analytics')} placement='right-start' style={{ marginLeft: '1vh', width: 'auto', minWidth: '10vw', height: '10vw', background: 'white', borderRadius: '10px' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', justifyContent:'center', height:'100%' }}>
-                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent:'center' }}>
-                      <div>Imports</div>
-                      <h1  style={{fontWeight:'lighter'}}>{downloads}</h1>
-                    </div>
+
+      <PopupManager.Provider value={{popups, setPopups}}>
+          <RegisterModal></RegisterModal>
+          <Modal open={!data} style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}><CircularProgress style={{ width: '5vw', height: '5vw', outline: 'none' }}></CircularProgress></Modal>
+          {data &&
+            <>
+              <div style={{ display: 'flex', height: '95vh' }} className="App">
+                <div style={{ height: '100%', position: 'relative', width: '30vw', borderRight: '1px solid #e5e5e5' }} spellCheck='false'>
+                  <Editor
+                    style={{ width: '100%', height: '100%', textAlign: 'left', background: '#FFF', borderRight: '1px solid #d2d3d4' }}
+                    value={activeNode ? activeNode.md : 'test'}
+                    defaultValue={activeNode ? activeNode.md : "# Hover over the start node for help with creating your plan #"}
+                    onChange={handleEditorChange}
+                    uploadImage={uploadImage}
+                    embeds={[
+                      {
+                        title: "Google Doc",
+                        keywords: "google docs gdocs",
+                        defaultHidden: false,
+                        matcher: href => href.match(/www.youtube.com\/embed\//i),
+                        href: href => href,
+                        component: Video
+                      }
+                    ]}
+                  >
+                  </Editor>
+                </div>
+                <div onContextMenu={(e) => handleNodeRightClick(e)} style={{ width: '70vw', position: 'relative', marginLeft: '10vh', cursor: 'grab', background: '#F7F6F3', backgroundImage: 'radial-gradient(#d2d2d2 1px, transparent 0)', backgroundSize: '1vw 1vw', backgroundPosition: '-0.5vw -0.5vw' }}>
+                  <div style={{ display: 'flex', flexDirection: 'column', position: 'absolute', top: '2vh', left: '2vh', }}>
+                    <Button className='Analytics' id='Analytics' onMouseLeave={() => setPopups(setPopupState('Analytics', false,  popups))} onClick={() => setPopups(setPopupState('Analytics', true,  popups))}><Timeline fontSize='large' style={{}} ></Timeline><div className='inner' style={{ width: '0', overflow: 'hidden', opacity: 0 }}>Analytics</div></Button>
+                    <Popper open={popups.Analytics} anchorEl={document.getElementById('Analytics')} placement='right-start' style={{ marginLeft: '1vh', width: 'auto', minWidth: '10vw', height: '10vw', background: 'white', borderRadius: '10px', border:'1px solid #e5e5e5'}}>
+                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%' }}>
+                        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+                          <div>Imports</div>
+                          <h1 style={{ fontWeight: 'lighter' }}>{downloads}</h1>
+                        </div>
+                      </div>
+                    </Popper>
                   </div>
-                </Popper>
-              </div>
-              <Graph
-                id="graph_id"
-                data={data}
-                config={myConfig}
-                onClickNode={onClickNode}
-                onNodePositionChange={onNodePositionChange}
-                onMouseOverNode={onHoverNode}
-                onRightClickNode={(e) => { handleNodeRightClick(e) }}
-                style={{}}
-              ></Graph>
-              <Menu
-                keepMounted
-                open={mouseY !== null}
-                onClose={handleContextMenuClose}
-                anchorReference="anchorPosition"
-                anchorPosition={mouseY !== null && mouseX !== null ? { top: mouseY, left: mouseX } : undefined}>
-                <MenuItem onClick={() => { setOpenAddNodeWindow(true); handleContextMenuClose() }}>Add node after active node</MenuItem>
-                <MenuItem onClick={() => { setIsEditing(true); setOpenAddNodeWindow(true); handleContextMenuClose() }}>Edit active node</MenuItem>
-                {/* <MenuItem onClick={() => { DeleteNode(); handleContextMenuClose() }}>Delete active node</MenuItem> */}
-              </Menu>
-            </div>
-            <PlanSelector plans={plans} plan={props.plan} userID={props.userID} open={openPlanSelector} close={() => setOpenPlanSelector(false)}></PlanSelector>
-            <NewNodePopup open={openAddNodeWindow} close={() => { setOpenAddNodeWindow(false); setIsEditing(false) }} addNode={AddNode} editing={isEditing} EditNode={EditNode}></NewNodePopup>
-          </div >
-        </>
-      }
+                  <Graph
+                    id="graph_id"
+                    data={data}
+                    config={myConfig}
+                    onClickNode={onClickNode}
+                    onNodePositionChange={onNodePositionChange}
+                    onMouseOverNode={onHoverNode}
+                    onRightClickNode={(e) => { handleNodeRightClick(e) }}
+                    style={{}}
+                  ></Graph>
+                  <Menu
+                    keepMounted
+                    open={mouseY !== null}
+                    onClose={handleContextMenuClose}
+                    anchorReference="anchorPosition"
+                    anchorPosition={mouseY !== null && mouseX !== null ? { top: mouseY, left: mouseX } : undefined}>
+                    <MenuItem onClick={() => { setPopups(setPopupState('AddNode', true, popups)); handleContextMenuClose() }}>Add node after active node</MenuItem>
+                    <MenuItem onClick={() => { setIsEditing(true); setPopups(setPopupState('AddNode', true, popups)); handleContextMenuClose() }}>Edit active node</MenuItem>
+                    {/* <MenuItem onClick={() => { DeleteNode(); handleContextMenuClose() }}>Delete active node</MenuItem> */}
+                  </Menu>
+                </div>
+                <PlanSelector plans={plans} plan={props.plan} userID={props.userID}></PlanSelector>
+                <NewNodePopup addNode={AddNode} editing={isEditing} EditNode={EditNode}></NewNodePopup>
+              </div >
+            </>
+          }
+      </PopupManager.Provider>
     </div>
   );
 }

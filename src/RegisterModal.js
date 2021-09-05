@@ -1,11 +1,13 @@
-import React, {useState} from 'react'
+import React, {useState, useContext} from 'react'
 import { Dialog, TextField, Button } from '@material-ui/core'
+import {PopupManager, setPopupState}  from './PopupManager'
 
 const firebase  = require('firebase').default
 
 export default function RegisterModal(props) {
 
     const [value, setValue] = useState()
+    const {popups, setPopups} = useContext(PopupManager)
 
     async function register(){
         console.log(value)
@@ -14,12 +16,14 @@ export default function RegisterModal(props) {
                 Time: new Date().toLocaleString(),
                 Email:value,
             })
-            props.close()
+            let temp = popups;
+            temp.Register = false;
+            setPopups(temp)
         }
     }
 
     return (
-        <Dialog open={props.open} onClose={props.close} maxWidth='md' >
+        <Dialog open={popups.Register} onClose={()=>setPopups(setPopupState('Register', false, popups))} maxWidth='md' >
             <div style={{ padding: '10vh', display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center' }}>
                 <h1>Nodemap is still in the works right now...</h1>
                 <p>If you liked the demo, register with your email and we will add you to our early adopters list!</p>

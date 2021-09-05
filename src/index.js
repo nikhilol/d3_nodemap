@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
@@ -20,16 +20,16 @@ const app = firebase.initializeApp({
 
 
 ReactDOM.render(
-  <Router>
-    <Switch>
-      <Route path='/demo' component={Demo}></Route>
-      <Route exact path='/plan/:user/:plan' component={withRouter(PlanRoute)} />
-      <Route exact path='/plan/:user' component={withRouter(UserRoute)} />
-      <Route path='/login' component={Login}></Route>
-      <Route path='/signup' component={Signup}></Route>
-      <Route path='/' component={App}></Route>
-    </Switch>
-  </Router>,
+    <Router>
+      <Switch>
+        <Route path='/demo' component={Demo}></Route>
+        <Route exact path='/plan/:user/:plan' component={withRouter(PlanRoute)} />
+        <Route exact path='/plan/:user' component={withRouter(UserRoute)} />
+        <Route path='/login' component={Login}></Route>
+        <Route path='/signup' component={Signup}></Route>
+        <Route path='/' component={App}></Route>
+      </Switch>
+    </Router>,
   document.getElementById('root')
 );
 
@@ -41,8 +41,8 @@ reportWebVitals();
 function PlanRoute() {
   let { user, plan } = useParams()
   if (user) {
-    return (<App userID={user}  plan={plan}></App>)
-  } 
+    return (<App userID={user} plan={plan}></App>)
+  }
 }
 
 function UserRoute() {
@@ -52,6 +52,6 @@ function UserRoute() {
   }
 }
 
-function Demo(){
+function Demo() {
   return (<App userID='Demo1' plan='Your first plan!' demo></App>)
 }
