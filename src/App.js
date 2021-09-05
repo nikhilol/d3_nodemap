@@ -112,7 +112,7 @@ function App(props) {
     MdValue: [],
     UserIDRoute: props.userID,
     CurrentPlan: props.plan,
-    ActiveNode: null
+    ActiveNode: {}
   })
 
   firebase.auth().onAuthStateChanged((user) => {
@@ -130,20 +130,6 @@ function App(props) {
     await firebase.auth().signOut()
     window.location.assign('/login')
   }
-
-  //helpers top get nodes in a plan
-  // async function getData() {
-  //   // let response = await axios.get(`${RESOURCES.apiURL}/plans/nodes?user=${props.userID}&title=${props.plan}`)
-  //   let response = await 
-
-  //   console.log('RES:', response.data)
-  //   return response
-  // }
-
-  //helper to get plan IDs
-  // async function getPlans() {
-  //   return await axios.get(`${RESOURCES.apiURL}/plans?user=${props.userID}`)
-  // }
 
   //save when data changes
   useEffect(() => {
@@ -181,7 +167,7 @@ function App(props) {
       if (data.data) {
         if (mounted) {
           console.log('DATA:', data.data.nodes.nodes)
-          setAppData(setMultiDataState({ Data: { ...data.data.nodes }, Plans: _plans, ActiveNode: data.data.nodes.nodes[0].id }, appData))
+          setAppData(setMultiDataState({ Data: { ...data.data.nodes }, Plans: _plans, ActiveNode: data.data.nodes.nodes[0] }, appData))
         }
       }
     })
@@ -308,14 +294,15 @@ function App(props) {
   //set active node on hover
   function onHoverNode(nodeId, node) {
     const previous = appData.ActiveNode
-    setAppData(setDataState('ActiveNode', node.id, appData))
+    setAppData(setMultiDataState({ActiveNode: node, MdValue: node.md}, appData))
     const el = document.getElementById(node.id).firstChild
     el.style.transition = '0.25s'
     el.style.transform = 'translate(-33.3333px, -33.3333px) scale(1.5)'
-    if (previous !== node.id) {
-      const prev = document.getElementById(previous).firstChild
+    if (previous.id !== node.id) {
+      const prev = document.getElementById(previous.id).firstChild
       prev.style.transform = 'translate(0px, 0px) scale(1)'
     }
+    console.log(appData.Data)
   };
 
   //markdown content change handler
@@ -380,8 +367,8 @@ function App(props) {
                   <div style={{ height: '100%', position: 'relative', width: '30vw', borderRight: '1px solid #e5e5e5' }} spellCheck='false'>
                     <Editor
                       style={{ width: '100%', height: '100%', textAlign: 'left', background: '#FFF', borderRight: '1px solid #d2d3d4' }}
-                      value={activeNode ? activeNode.md : 'test'}
-                      defaultValue={activeNode ? activeNode.md : "# Hover over the start node for help with creating your plan #"}
+                      value={appData.ActiveNode ? appData.ActiveNode.md : 'test'}
+                      defaultValue={appData.ActiveNode ? appData.ActiveNode.md : "# Hover over the start node for help with creating your plan #"}
                       onChange={handleEditorChange}
                       uploadImage={uploadImage}
                       embeds={[
