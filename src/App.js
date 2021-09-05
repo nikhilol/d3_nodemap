@@ -149,7 +149,7 @@ function App(props) {
   useEffect(() => {
     if (appData.Data) {
       console.log('NODES', appData.Data)
-      if (appData.Data.length) {
+      if (appData.Data) {
         Save();
       }
     }
@@ -221,15 +221,16 @@ function App(props) {
 
   //save plan data to firebase
   function Save() {
-    // if (data && !props.demo) {
-    //   axios({
-    //     method: 'post',
-    //     url: `${RESOURCES.apiURL}/plans/update?user=${userData.displayName}&title=${props.plan}`,
-    //     data: data
-    //   }).then(res => {
-    //     console.log(res.data);
-    //   });
-    // }
+    console.log('saving')
+    if (appData.Data && !props.demo) {
+      axios({
+        method: 'post',
+        url: `${RESOURCES.apiURL}/plans/update?user=${userData.displayName}&title=${props.plan}`,
+        data: appData.Data
+      }).then(res => {
+        console.log(res.data);
+      });
+    }
   }
 
   //Delete node to plan
