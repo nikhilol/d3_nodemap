@@ -2,6 +2,7 @@ import React, { useContext, useState } from 'react'
 import { Button, Dialog, DialogActions, TextField } from '@material-ui/core'
 import RESOURCES from './Resources/resources'
 import { PopupManager, setPopupState } from './PopupManager'
+import { UserManager } from './userManager'
 
 const axios = require('axios')
 const firebase = require('firebase').default
@@ -11,11 +12,12 @@ export default function AddNewPlanPopup(props) {
     const [addValue, setAddvalue] = useState("")
     const [importValue, setImportvalue] = useState("")
     const {popups, setPopups} = useContext(PopupManager)
+    const {userData} =  useContext(UserManager)
 
     async function Add() {
-        let res = await axios.post(`${RESOURCES.apiURL}/plans?user=${firebase.auth().currentUser.displayName}&title=${addValue}`)
+        let res = await axios.post(`${RESOURCES.apiURL}/plans?user=${userData.displayName}&title=${addValue}`)
         if(res.status === 200){
-            window.location.assign(`/plan/${firebase.auth().currentUser.displayName}/${addValue}`)
+            window.location.assign(`/plan/${userData.displayName}/${addValue}`)
         } else alert('There was a problem adding this plan!')
     }
 
@@ -23,9 +25,9 @@ export default function AddNewPlanPopup(props) {
         let split = importValue.split('/')
         let plan = split[split.length - 1];
         let creator = split[split.length - 2];
-        let res = await axios.post(`${RESOURCES.apiURL}/plans/import?user=${firebase.auth().currentUser.displayName}&creator=${creator}&plan=${plan}`)
+        let res = await axios.post(`${RESOURCES.apiURL}/plans/import?user=${userData.displayName}&creator=${creator}&plan=${plan}`)
         if(res.status === 200){
-            window.location.assign(`/plan/${firebase.auth().currentUser.displayName}/${plan}`)
+            window.location.assign(`/plan/${userData.displayName}/${plan}`)
         } else alert('There was a problem adding this plan!')
     }
 

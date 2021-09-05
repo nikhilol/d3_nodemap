@@ -8,10 +8,11 @@ import RegisterModal from './RegisterModal';
 import React, { useState, useEffect } from 'react'
 import { PopupManager, setPopupState } from './PopupManager';
 import { Graph } from 'react-d3-graph'
-import { Menu, MenuItem, Button, CircularProgress, Modal, Popper, Paper } from '@material-ui/core'
+import { Menu, MenuItem, Button, CircularProgress, Modal, Popper } from '@material-ui/core'
 import { ExpandMore, Timeline } from '@material-ui/icons'
 import 'react-markdown-editor-lite/lib/index.css';
 import Editor from "rich-markdown-editor"
+import { UserManager } from './userManager';
 const axios = require('axios')
 const firebase = require("firebase").default
 //Config
@@ -90,20 +91,21 @@ function App(props) {
   const [mouseX, setMouseX] = useState(null)
   const [mouseY, setMouseY] = useState(null)
   const [isEditing, setIsEditing] = useState(false)
-  const [user, setUser] = useState(null)
-  const [downloads, setDownloads] = useState(1093487)
+  const [downloads, setDownloads] = useState(0)
 
   const [popups, setPopups] = useState({
     AddNode: false,
     PlanSelector: false,
     AddPlan: false,
     Register: false,
-    Analytics: false  
+    Analytics: false
   })
+
+  const [userData, setUserData] = useState({})
 
   firebase.auth().onAuthStateChanged((user) => {
     if (user) {
-      setUser(user)
+      setUserData(user)
       if (!props.userID) {
         window.location.assign('/plan/' + user.displayName)
       }
@@ -420,7 +422,7 @@ function App(props) {
 
   async function uploadImage(file) {
     try {
-      let ref = firebase.storage().ref().child(user ? user.displayName : 'Nodemap' + '/' + file.name)
+      let ref = firebase.storage().ref().child(userData[0] ? userData.displayName : 'Nodemap' + '/' + file.name)
       let snap = await ref.put(file)
       if (snap)
         return await ref.getDownloadURL()
@@ -434,20 +436,21 @@ function App(props) {
 
 
   return (
-    <div style={{ margin: 0, padding: 0 }} className='App'>
-      <nav style={{ height: '5vh', background: '#F5F5F5', borderBottom: '1px solid #e5e5e5', display: 'flex', justifyContent: 'center', alignItems: 'center' }} className="App">
-        <h2 style={{ cursor: 'pointer', position: 'relative', color: '#2b2b2b', display: 'flex', alignItems: 'center', fontWeight: 'lighter' }} onClick={() => setPopups(setPopupState('PlanSelector', true, popups))}>{props.plan}<ExpandMore id='planTitle'></ExpandMore></h2>
-        {user ?
-          <Button style={{ background: '#ff6666', color: 'white', position: 'absolute', right: '1vh' }} onClick={logoutHandler}>Log out</Button>
-          :
-          props.demo ?
-            <Button style={{ background: '#6930C3', color: 'white', position: 'absolute', right: '1vh' }} onClick={() => setPopups(setPopupState('Register', true, popups))}>Sign up</Button>
+    <UserManager.Provider value={{ userData, setUserData }}>
+      <div style={{ margin: 0, padding: 0 }} className='App'>
+        <nav style={{ height: '5vh', background: '#F5F5F5', borderBottom: '1px solid #e5e5e5', display: 'flex', justifyContent: 'center', alignItems: 'center' }} className="App">
+          <h2 style={{ cursor: 'pointer', position: 'relative', color: '#2b2b2b', display: 'flex', alignItems: 'center', fontWeight: 'lighter' }} onClick={() => setPopups(setPopupState('PlanSelector', true, popups))}>{props.plan}<ExpandMore id='planTitle'></ExpandMore></h2>
+          {userData.displayName ?
+            <Button style={{ background: '#ff6666', color: 'white', position: 'absolute', right: '1vh' }} onClick={logoutHandler}>Log out</Button>
             :
-            <Button style={{ background: '#6930C3', color: 'white', position: 'absolute', right: '1vh' }} onClick={() => setPopups(setPopupState('Register', true, popups))}>Log in</Button>
-        }
-      </nav>
+            props.demo ?
+              <Button style={{ background: '#6930C3', color: 'white', position: 'absolute', right: '1vh' }} onClick={() => setPopups(setPopupState('Register', true, popups))}>Sign up</Button>
+              :
+              <Button style={{ background: '#6930C3', color: 'white', position: 'absolute', right: '1vh' }} onClick={() => setPopups(setPopupState('Register', true, popups))}>Log in</Button>
+          }
+        </nav>
 
-      <PopupManager.Provider value={{popups, setPopups}}>
+        <PopupManager.Provider value={{ popups, setPopups }}>
           <RegisterModal></RegisterModal>
           <Modal open={!data} style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}><CircularProgress style={{ width: '5vw', height: '5vw', outline: 'none' }}></CircularProgress></Modal>
           {data &&
@@ -475,8 +478,8 @@ function App(props) {
                 </div>
                 <div onContextMenu={(e) => handleNodeRightClick(e)} style={{ width: '70vw', position: 'relative', marginLeft: '10vh', cursor: 'grab', background: '#F7F6F3', backgroundImage: 'radial-gradient(#d2d2d2 1px, transparent 0)', backgroundSize: '1vw 1vw', backgroundPosition: '-0.5vw -0.5vw' }}>
                   <div style={{ display: 'flex', flexDirection: 'column', position: 'absolute', top: '2vh', left: '2vh', }}>
-                    <Button className='Analytics' id='Analytics' onMouseLeave={() => setPopups(setPopupState('Analytics', false,  popups))} onClick={() => setPopups(setPopupState('Analytics', true,  popups))}><Timeline fontSize='large' style={{}} ></Timeline><div className='inner' style={{ width: '0', overflow: 'hidden', opacity: 0 }}>Analytics</div></Button>
-                    <Popper open={popups.Analytics} anchorEl={document.getElementById('Analytics')} placement='right-start' style={{ marginLeft: '1vh', width: 'auto', minWidth: '10vw', height: '10vw', background: 'white', borderRadius: '10px', border:'1px solid #e5e5e5'}}>
+                    <Button className='Analytics' id='Analytics' onMouseLeave={() => setPopups(setPopupState('Analytics', false, popups))} onClick={() => setPopups(setPopupState('Analytics', true, popups))}><Timeline fontSize='large' style={{}} ></Timeline><div className='inner' style={{ width: '0', overflow: 'hidden', opacity: 0 }}>Analytics</div></Button>
+                    <Popper open={popups.Analytics} anchorEl={document.getElementById('Analytics')} placement='right-start' style={{ marginLeft: '1vh', width: 'auto', minWidth: '10vw', height: '10vw', background: 'white', borderRadius: '10px', border: '1px solid #e5e5e5' }}>
                       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%' }}>
                         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
                           <div>Imports</div>
@@ -511,8 +514,9 @@ function App(props) {
               </div >
             </>
           }
-      </PopupManager.Provider>
-    </div>
+        </PopupManager.Provider>
+      </div>
+    </UserManager.Provider>
   );
 }
 
