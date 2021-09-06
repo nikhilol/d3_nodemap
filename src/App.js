@@ -104,7 +104,8 @@ function App(props) {
     Register: false,
     Analytics: false,
     ContextMenu: false,
-    MousePosition: [null, null]
+    MouseX: 0,
+    MouseY: 0,
   })
 
   const [userData, setUserData] = useState({})
@@ -271,11 +272,6 @@ function App(props) {
     //   console.log(object)
   }
 
-  function EditNode(platform) {
-    updateNodeData(appData.ActiveNode, 'Platform', platform)
-    updateNodeData(appData.ActiveNode, 'svg', '/Logos/' + platform)
-  }
-
   //node completion handler
   function onClickNode(node) {
     console.log(node)
@@ -315,10 +311,11 @@ function App(props) {
   //context menu click handler
   function handleNodeRightClick(event) {
     event.preventDefault();
-    setMultiPopupState({
-      MousePosition: [event.clientX + 20, event.clientY],
+    setPopups(setMultiPopupState({
+      MouseX: event.clientX + 20,
+      MouseY: event.clientY,
       ContextMenu: true
-    }, popups)
+    }, popups))
   }
 
 
@@ -366,7 +363,7 @@ function App(props) {
                     >
                     </Editor>
                   </div>
-                  <div onContextMenu={(e) => handleNodeRightClick(e)} style={{ width: '70vw', position: 'relative', marginLeft: '10vh', cursor: 'grab', background: '#F7F6F3', backgroundImage: 'radial-gradient(#d2d2d2 1px, transparent 0)', backgroundSize: '1vw 1vw', backgroundPosition: '-0.5vw -0.5vw' }}>
+                  <div id='ContextAnchor' onContextMenu={(e) => handleNodeRightClick(e)} style={{ width: '70vw', position: 'relative', marginLeft: '10vh', cursor: 'grab', background: '#F7F6F3', backgroundImage: 'radial-gradient(#d2d2d2 1px, transparent 0)', backgroundSize: '1vw 1vw', backgroundPosition: '-0.5vw -0.5vw' }}>
                     <div style={{ display: 'flex', flexDirection: 'column', position: 'absolute', top: '2vh', left: '2vh', }}>
                       <Button className='Analytics' id='Analytics'
                         onMouseLeave={() => setPopups(setPopupState('Analytics', false, popups))}
@@ -384,12 +381,12 @@ function App(props) {
                       onNodePositionChange={onNodePositionChange}
                       onMouseOverNode={onHoverNode}
                       style={{}}
-                      >
-                      </Graph>
-                      <ContextMenu open={popups.ContextMenu}></ContextMenu>
+                    >
+                    </Graph>
+                    <ContextMenu></ContextMenu>
                   </div>
                   <PlanSelector></PlanSelector>
-                  <NewNodePopup editing={isEditing} EditNode={EditNode}></NewNodePopup>
+                  <NewNodePopup></NewNodePopup>
                 </div >
               </>
             }

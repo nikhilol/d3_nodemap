@@ -12,21 +12,51 @@ export default function NewPlanPopup(props) {
     const [titleError, setTitleError] = useState(false)
 
     const { popups, setPopups } = useContext(PopupManager)
-    const { appData, setAppData} = useContext(AppDataManager)
+    const { appData, setAppData } = useContext(AppDataManager)
 
     function save() {
         setPlatformError(!platform)
         setTitleError(!title)
 
         if (platform && title) {
-            if (props.editing) {
-                props.EditNode(platform)
+            if (popups.Editing) {
+                EditNode(platform)
             } else {
                 AddNode();
             }
             setPopups(setPopupState('AddNode', false, popups))
         }
     }
+
+    //update a node property helper function
+    function updateNodeData(nodeId, property, newValue) {
+        let temp = { ...appData.Data }
+        console.log('test', temp.nodes)
+        for (let key in temp.nodes) {
+            if (temp.nodes[key].id === nodeId) {
+                //if new value is a bool return the opposite of this value
+                //else return the newvalue to th3e property
+                if (newValue === 'BOOL') {
+                    temp.nodes[key][property] = !temp.nodes[key][property]
+                    updateLinkColour(nodeId, temp.nodes[key][property])
+                }
+                else { temp.nodes[key][property] = newValue }
+                console.log(`Updating ${nodeId}'s property ${property} to ${newValue}`)
+            }
+        }
+        setAppData(setDataState('Data', { ...temp }, appData))
+    };
+
+    function updateLinkColour(nodeId, isComplete) {
+        let temp = { ...appData.Data }
+        for (let key in temp.links) {
+          if (temp.links[key].target === nodeId) {
+            temp.links[key].color = isComplete ? '#72EFDD' : '#D2D2D2';
+          }
+        }
+        setAppData(setDataState('Data', { ...temp }, appData))
+        console.log(temp)
+      };
 
     //Add node to plan
     function AddNode() {
@@ -66,7 +96,7 @@ export default function NewPlanPopup(props) {
                     temp.links.push({ source: temp.nodes[key - 1].id, target: temp.nodes[key].id, color: '#D2D2D2' })
                     console.log('TEMP', temp)
 
-                    setAppData(setDataState('Data', {...temp}, appData))
+                    setAppData(setDataState('Data', { ...temp }, appData))
                 }
             })
         }
@@ -79,6 +109,11 @@ export default function NewPlanPopup(props) {
             randomString += alphabet.charAt(Math.floor(Math.random() * alphabet.length))
         }
         return randomString
+    }
+
+    function EditNode(platform) {
+        updateNodeData(appData.ActiveNode, 'Platform', platform)
+        updateNodeData(appData.ActiveNode, 'svg', '/Logos/' + platform)
     }
 
     return (
@@ -105,7 +140,7 @@ export default function NewPlanPopup(props) {
             <Divider></Divider>
             <DialogActions>
                 <Button onClick={() => setPopups(setPopupState('AddNode', false, popups))}>Cancel</Button>
-                <Button onClick={save}>{props.editing ? 'Save' : 'Add'}</Button>
+                <Button onClick={save}>{popups.Editing ? 'Save' : 'Add'}</Button>
             </DialogActions>
         </Dialog>
     )

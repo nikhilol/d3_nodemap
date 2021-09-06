@@ -1,34 +1,35 @@
-import React, { useContext, useState } from 'react'
-import { Menu, MenuItem } from '@material-ui/core'
+import React, { useContext } from 'react'
+import { MenuItem, Popover } from '@material-ui/core'
 import { PopupManager, setMultiPopupState, setPopupState } from './PopupManager'
 
-export default function ContextMenu(props) {
+export default function ContextMenu() {
 
     const { popups, setPopups } = useContext(PopupManager)
 
     //context menu close handler
-    function handleContextMenuClose() {
+    function handleContextMenuClose(Action) {
         setPopups(setMultiPopupState({
-            MousePosition: [null, null],
-            ContextMenu: false
+            MouseX: 0,
+            MouseY: 0,
+            ContextMenu: false,
+            AddNode: true,
+            Editing: Action ===  'Editing'
         }, popups))
     }
 
     return (
-        <>
-            {popups.ContextMenu &&
-                <Menu
-                    id='ContextMenu'
-                    keepMounted
-                    open
-                    onClose={handleContextMenuClose}
-                    anchorReference="anchorPosition"
-                    anchorPosition={{ top: popups.MousePosition[1] + 'px', left: popups.MousePosition[0] + 'px' }}>
-                    <MenuItem onClick={() => { setPopups(setPopupState('AddNode', true, popups)); handleContextMenuClose() }}>Add node after active node</MenuItem>
-                    {/* <MenuItem onClick={() => { setIsEditing(true); setPopups(setPopupState('AddNode', true, popups)); handleContextMenuClose() }}>Edit active node</MenuItem> */}
-                    {/* <MenuItem onClick={() => { DeleteNode(); handleContextMenuClose() }}>Delete active node</MenuItem> */}
-                </Menu>
-            }
-        </>
+        <Popover
+            elevation={3}
+            id='ContextMenu'
+            keepMounted
+            open={popups.ContextMenu}
+            onClose={handleContextMenuClose}
+            anchorReference="anchorPosition"
+            anchorPosition={{ top: popups.MouseY, left: popups.MouseX }}
+        >
+            <MenuItem onClick={() => { handleContextMenuClose('AddNode') }}>Add node after active node</MenuItem>
+            <MenuItem onClick={() => { handleContextMenuClose('Editing') }}>Edit active node</MenuItem>
+            {/* <MenuItem onClick={() => { DeleteNode(); handleContextMenuClose() }}>Delete active node</MenuItem> */}
+        </Popover>
     )
 }
