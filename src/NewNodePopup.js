@@ -33,7 +33,7 @@ export default function NewPlanPopup(props) {
         if (appData.ActiveNode) {
             appData.Data.nodes.forEach(node => {
                 console.log(node)
-                if (node.id === appData.ActiveNode) {
+                if (node.id === appData.ActiveNode.id) {
                     console.log('about to run')
                     let temp = appData.Data;
                     console.log('temp', temp)
