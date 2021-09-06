@@ -15,16 +15,20 @@ export default function ContextMenu(props) {
     }
 
     return (
-        <Menu
-            id='ContextMenu'
-            keepMounted
-            open={popups.ContextMenu == true ? true: false}
-            onClose={handleContextMenuClose}
-            anchorReference="anchorPosition"
-            anchorPosition={{ top: popups.MousePosition[1] + 'px', left: popups.MousePosition[0] + 'px' }}>
-            <MenuItem onClick={() => { setPopups(setPopupState('AddNode', true, popups)); handleContextMenuClose() }}>Add node after active node</MenuItem>
-            {/* <MenuItem onClick={() => { setIsEditing(true); setPopups(setPopupState('AddNode', true, popups)); handleContextMenuClose() }}>Edit active node</MenuItem> */}
-            {/* <MenuItem onClick={() => { DeleteNode(); handleContextMenuClose() }}>Delete active node</MenuItem> */}
-        </Menu>
+        <>
+            {popups.ContextMenu &&
+                <Menu
+                    id='ContextMenu'
+                    keepMounted
+                    open
+                    onClose={handleContextMenuClose}
+                    anchorReference="anchorPosition"
+                    anchorPosition={{ top: popups.MousePosition[1] + 'px', left: popups.MousePosition[0] + 'px' }}>
+                    <MenuItem onClick={() => { setPopups(setPopupState('AddNode', true, popups)); handleContextMenuClose() }}>Add node after active node</MenuItem>
+                    {/* <MenuItem onClick={() => { setIsEditing(true); setPopups(setPopupState('AddNode', true, popups)); handleContextMenuClose() }}>Edit active node</MenuItem> */}
+                    {/* <MenuItem onClick={() => { DeleteNode(); handleContextMenuClose() }}>Delete active node</MenuItem> */}
+                </Menu>
+            }
+        </>
     )
 }
