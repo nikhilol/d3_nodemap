@@ -8,15 +8,16 @@ import {
 } from "react-router-dom";
 import AddNewPlanPopup from './AddNewPlanPopup'
 import { PopupManager, setPopupState } from './PopupManager';
-const firebase = require('firebase').default
+import { AppDataManager } from './AppDataManager';
 
 function PlanSelector(props) {
 
     const { popups, setPopups } = useContext(PopupManager)
+    const {appData, setAppData} = useContext(AppDataManager)
 
     return (
         <div>
-            {props.plans &&
+            {appData.Plans.length &&
                 <Menu
                     id="simple-menu"
                     anchorEl={document.getElementById('planTitle')}
@@ -25,10 +26,10 @@ function PlanSelector(props) {
                     elevation={3}
                 >
                     {
-                        props.plans.map(_plan => {
+                        appData.Plans.map(_plan => {
                             return (
-                                <Link style={{ width: '100%', height: '100%', colour: 'black' }} to={`/plan/${props.userID}/${encodeURI(_plan)}`}>
-                                    <MenuItem value={props.plans.indexOf(_plan)} onClick={()=>setPopups(setPopupState('PlanSelector', false, popups))}>
+                                <Link style={{ width: '100%', height: '100%', colour: 'black' }} to={`/plan/${appData.userIDRoute}/${encodeURI(_plan)}`}>
+                                    <MenuItem value={appData.Plans.indexOf(_plan)} onClick={()=>setPopups(setPopupState('PlanSelector', false, popups))}>
                                         {_plan}
                                     </MenuItem>
                                 </Link>
