@@ -13,7 +13,7 @@ import { AppDataManager } from './AppDataManager';
 function PlanSelector(props) {
 
     const { popups, setPopups } = useContext(PopupManager)
-    const {appData, setAppData} = useContext(AppDataManager)
+    const {appData} = useContext(AppDataManager)
 
     return (
         <div>

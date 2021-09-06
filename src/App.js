@@ -6,7 +6,7 @@ import RESOURCES from './Resources/resources'
 import RegisterModal from './RegisterModal';
 
 import React, { useState, useEffect } from 'react'
-import { PopupManager, setPopupState } from './PopupManager';
+import { PopupManager, setMultiPopupState, setPopupState } from './PopupManager';
 import { Graph } from 'react-d3-graph'
 import { Menu, MenuItem, Button, CircularProgress, Modal, Popper } from '@material-ui/core'
 import { ExpandMore, Timeline } from '@material-ui/icons'
@@ -14,11 +14,14 @@ import 'react-markdown-editor-lite/lib/index.css';
 import Editor from "rich-markdown-editor"
 import { UserManager } from './userManager';
 import { AppDataManager, setDataState, setMultiDataState } from './AppDataManager';
+import Nav from './Nav';
+import Analytics from './Analytics';
+import ContextMenu from './ContextMenu';
 
 const axios = require('axios').default
 const firebase = require("firebase").default
+
 //Config
-const reset = false;
 const myConfig = {
   "automaticRearrangeAfterDropNode": false,
   "collapsible": false,
@@ -91,17 +94,17 @@ function App(props) {
   const [activeNode, setActiveNode] = useState(null)
   const [mdValue, setMdValue] = useState([])
 
-  const [mouseX, setMouseX] = useState(null)
-  const [mouseY, setMouseY] = useState(null)
+
   const [isEditing, setIsEditing] = useState(false)
-  const [downloads, setDownloads] = useState(0)
 
   const [popups, setPopups] = useState({
     AddNode: false,
     PlanSelector: false,
     AddPlan: false,
     Register: false,
-    Analytics: false
+    Analytics: false,
+    ContextMenu: false,
+    MousePosition: [null, null]
   })
 
   const [userData, setUserData] = useState({})
@@ -112,6 +115,7 @@ function App(props) {
     MdValue: [],
     UserIDRoute: props.userID,
     CurrentPlan: props.plan,
+    IsDemo: props.demo,
     ActiveNode: {}
   })
 
@@ -125,11 +129,6 @@ function App(props) {
     else if (props.userID === 'Demo1' && props.plan) { return }
     else { window.location.assign('/login') }
   })
-
-  async function logoutHandler() {
-    await firebase.auth().signOut()
-    window.location.assign('/login')
-  }
 
   //save when data changes
   useEffect(() => {
@@ -285,7 +284,6 @@ function App(props) {
 
   //update node coords when position changed
   function onNodePositionChange(nodeId, x, y) {
-    console.log(x, y)
     updateNodeData(nodeId, 'fx', x)
     updateNodeData(nodeId, 'fy', y)
     Save()
@@ -294,7 +292,7 @@ function App(props) {
   //set active node on hover
   function onHoverNode(nodeId, node) {
     const previous = appData.ActiveNode
-    setAppData(setMultiDataState({ActiveNode: node, MdValue: node.md}, appData))
+    setAppData(setMultiDataState({ ActiveNode: node, MdValue: node.md }, appData))
     const el = document.getElementById(node.id).firstChild
     el.style.transition = '0.25s'
     el.style.transform = 'translate(-33.3333px, -33.3333px) scale(1.5)'
@@ -317,15 +315,12 @@ function App(props) {
   //context menu click handler
   function handleNodeRightClick(event) {
     event.preventDefault();
-    setMouseX(event.clientX + 20)
-    setMouseY(event.clientY)
+    setMultiPopupState({
+      MousePosition: [event.clientX + 20, event.clientY],
+      ContextMenu: true
+    }, popups)
   }
 
-  //context menu close handler
-  function handleContextMenuClose() {
-    setMouseX(null)
-    setMouseY(null)
-  }
 
   async function uploadImage(file) {
     try {
@@ -340,25 +335,12 @@ function App(props) {
     }
   }
 
-
-
   return (
     <UserManager.Provider value={{ userData, setUserData }}>
       <AppDataManager.Provider value={{ appData, setAppData }}>
-        <div style={{ margin: 0, padding: 0 }} className='App'>
-          <nav style={{ height: '5vh', background: '#F5F5F5', borderBottom: '1px solid #e5e5e5', display: 'flex', justifyContent: 'center', alignItems: 'center' }} className="App">
-            <h2 style={{ cursor: 'pointer', position: 'relative', color: '#2b2b2b', display: 'flex', alignItems: 'center', fontWeight: 'lighter' }} onClick={() => setPopups(setPopupState('PlanSelector', true, popups))}>{props.plan}<ExpandMore id='planTitle'></ExpandMore></h2>
-            {userData.displayName ?
-              <Button style={{ background: '#ff6666', color: 'white', position: 'absolute', right: '1vh' }} onClick={logoutHandler}>Log out</Button>
-              :
-              props.demo ?
-                <Button style={{ background: '#6930C3', color: 'white', position: 'absolute', right: '1vh' }} onClick={() => setPopups(setPopupState('Register', true, popups))}>Sign up</Button>
-                :
-                <Button style={{ background: '#6930C3', color: 'white', position: 'absolute', right: '1vh' }} onClick={() => setPopups(setPopupState('Register', true, popups))}>Log in</Button>
-            }
-          </nav>
-
-          <PopupManager.Provider value={{ popups, setPopups }}>
+        <PopupManager.Provider value={{ popups, setPopups }}>
+          <div style={{ margin: 0, padding: 0 }} className='App'>
+            <Nav></Nav>
             <RegisterModal></RegisterModal>
             {/* <Modal open={!appData.Data.nodes} style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}><CircularProgress style={{ width: '5vw', height: '5vw', outline: 'none' }}></CircularProgress></Modal> */}
             {appData.Data && appData.Data.nodes &&
@@ -386,15 +368,13 @@ function App(props) {
                   </div>
                   <div onContextMenu={(e) => handleNodeRightClick(e)} style={{ width: '70vw', position: 'relative', marginLeft: '10vh', cursor: 'grab', background: '#F7F6F3', backgroundImage: 'radial-gradient(#d2d2d2 1px, transparent 0)', backgroundSize: '1vw 1vw', backgroundPosition: '-0.5vw -0.5vw' }}>
                     <div style={{ display: 'flex', flexDirection: 'column', position: 'absolute', top: '2vh', left: '2vh', }}>
-                      <Button className='Analytics' id='Analytics' onMouseLeave={() => setPopups(setPopupState('Analytics', false, popups))} onClick={() => setPopups(setPopupState('Analytics', true, popups))}><Timeline fontSize='large' style={{}} ></Timeline><div className='inner' style={{ width: '0', overflow: 'hidden', opacity: 0 }}>Analytics</div></Button>
-                      <Popper open={popups.Analytics} anchorEl={document.getElementById('Analytics')} placement='right-start' style={{ marginLeft: '1vh', width: 'auto', minWidth: '10vw', height: '10vw', background: 'white', borderRadius: '10px', border: '1px solid #e5e5e5' }}>
-                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%' }}>
-                          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
-                            <div>Imports</div>
-                            <h1 style={{ fontWeight: 'lighter' }}>{downloads}</h1>
-                          </div>
-                        </div>
-                      </Popper>
+                      <Button className='Analytics' id='Analytics'
+                        onMouseLeave={() => setPopups(setPopupState('Analytics', false, popups))}
+                        onClick={() => setPopups(setPopupState('Analytics', true, popups))}>
+                        <Timeline fontSize='large' style={{}} ></Timeline>
+                        <div className='inner' style={{ width: '0', overflow: 'hidden', opacity: 0 }}>Analytics</div>
+                      </Button>
+                      <Analytics></Analytics>
                     </div>
                     <Graph
                       id="graph_id"
@@ -403,27 +383,18 @@ function App(props) {
                       onClickNode={onClickNode}
                       onNodePositionChange={onNodePositionChange}
                       onMouseOverNode={onHoverNode}
-                      onRightClickNode={(e) => { handleNodeRightClick(e) }}
                       style={{}}
-                    ></Graph>
-                    <Menu
-                      keepMounted
-                      open={mouseY !== null}
-                      onClose={handleContextMenuClose}
-                      anchorReference="anchorPosition"
-                      anchorPosition={mouseY !== null && mouseX !== null ? { top: mouseY, left: mouseX } : undefined}>
-                      <MenuItem onClick={() => { setPopups(setPopupState('AddNode', true, popups)); handleContextMenuClose() }}>Add node after active node</MenuItem>
-                      <MenuItem onClick={() => { setIsEditing(true); setPopups(setPopupState('AddNode', true, popups)); handleContextMenuClose() }}>Edit active node</MenuItem>
-                      {/* <MenuItem onClick={() => { DeleteNode(); handleContextMenuClose() }}>Delete active node</MenuItem> */}
-                    </Menu>
+                      >
+                      </Graph>
+                      <ContextMenu open={popups.ContextMenu}></ContextMenu>
                   </div>
-                  <PlanSelector plans={plans} plan={props.plan} userID={props.userID}></PlanSelector>
+                  <PlanSelector></PlanSelector>
                   <NewNodePopup editing={isEditing} EditNode={EditNode}></NewNodePopup>
                 </div >
               </>
             }
-          </PopupManager.Provider>
-        </div>
+          </div>
+        </PopupManager.Provider>
       </AppDataManager.Provider>
     </UserManager.Provider>
   );

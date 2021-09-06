@@ -7,3 +7,9 @@ export function setPopupState(property, newValue, currentstate){
     state[property] = newValue;
     return state;
 }
+
+export function setMultiPopupState(newObject, oldObject){
+    let state = {...oldObject, ...newObject};
+    console.log(state)
+    return state;
+}
