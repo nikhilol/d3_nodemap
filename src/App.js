@@ -8,7 +8,6 @@ import EditorPane from './EditorPane'
 
 import React, { useState, useEffect } from 'react'
 import { PopupManager, setMultiPopupState, setPopupState } from './PopupManager';
-import { Graph } from 'react-d3-graph'
 import { Menu, MenuItem, Button, CircularProgress, Modal, Popper } from '@material-ui/core'
 import { ExpandMore, Timeline } from '@material-ui/icons'
 import 'react-markdown-editor-lite/lib/index.css';
@@ -17,75 +16,11 @@ import { AppDataManager, setDataState, setMultiDataState } from './AppDataManage
 import Nav from './Nav';
 import Analytics from './Analytics';
 import ContextMenu from './ContextMenu';
+import GraphPane from './GraphPane';
 
 const axios = require('axios').default
 const firebase = require("firebase").default
 
-//Config
-const myConfig = {
-  "automaticRearrangeAfterDropNode": false,
-  "collapsible": false,
-  "directed": false,
-  "focusAnimationDuration": 0.75,
-  "focusZoom": 1,
-  "freezeAllDragEvents": false,
-  "height": window.innerHeight * 0.94,
-  "highlightDegree": 0,
-  "highlightOpacity": 1,
-  "linkHighlightBehavior": false,
-  "maxZoom": 8,
-  "minZoom": 0.1,
-  "nodeHighlightBehavior": false,
-  "panAndZoom": false,
-  "staticGraph": false,
-  "staticGraphWithDragAndDrop": true,
-  "width": window.innerWidth * 0.7,
-  "d3": {
-    "alphaTarget": 0.05,
-    "gravity": -100,
-    "linkLength": 100,
-    "linkStrength": 1,
-    "disableLinkForce": true
-  },
-  "node": {
-    "color": "#d3d3d3",
-    "fontColor": "black",
-    "fontSize": 24,
-    "fontWeight": "bold",
-    "highlightColor": "green",
-    "highlightFontSize": 36,
-    "highlightFontWeight": "normal",
-    "highlightStrokeColor": "green",
-    "highlightStrokeWidth": "20",
-    "labelProperty": "Title",
-    "mouseCursor": "pointer",
-    "opacity": 1,
-    "renderLabel": false,
-    "size": 1000,
-    "strokeColor": "#000000",
-    "strokeWidth": 500,
-    "symbolType": "circle",
-  },
-  "link": {
-    "fontColor": "black",
-    "fontSize": 24,
-    "fontWeight": "normal",
-    "highlightColor": "SAME",
-    "highlightFontSize": 36,
-    "highlightFontWeight": "normal",
-    "labelProperty": "label",
-    "mouseCursor": "auto",
-    "opacity": 1,
-    "renderLabel": false,
-    "semanticStrokeWidth": false,
-    "strokeWidth": 10,
-    "markerHeight": 6,
-    "markerWidth": 6,
-    "strokeDasharray": 0,
-    "strokeDashoffset": 0,
-    "strokeLinecap": "butt"
-  }
-}
 
 function App(props) {
   const [popups, setPopups] = useState({
@@ -263,33 +198,6 @@ function App(props) {
     //   console.log(object)
   }
 
-  //node completion handler
-  function onClickNode(node) {
-    console.log(node)
-    updateNodeData(node, 'IsComplete', 'BOOL')
-  }
-
-  //update node coords when position changed
-  function onNodePositionChange(nodeId, x, y) {
-    updateNodeData(nodeId, 'fx', x)
-    updateNodeData(nodeId, 'fy', y)
-    Save()
-  }
-
-  //set active node on hover
-  function onHoverNode(nodeId, node) {
-    const previous = appData.ActiveNode
-    setAppData(setMultiDataState({ ActiveNode: node, MdValue: node.md }, appData))
-    const el = document.getElementById(node.id).firstChild
-    el.style.transition = '0.25s'
-    el.style.transform = 'translate(-33.3333px, -33.3333px) scale(1.5)'
-    if (previous.id !== node.id) {
-      const prev = document.getElementById(previous.id).firstChild
-      prev.style.transform = 'translate(0px, 0px) scale(1)'
-    }
-    console.log(appData.Data)
-  };
-
   //context menu click handler
   function handleNodeRightClick(event) {
     event.preventDefault();
@@ -324,16 +232,7 @@ function App(props) {
                       </Button>
                       <Analytics></Analytics>
                     </div>
-                    <Graph
-                      id="graph_id"
-                      data={appData.Data}
-                      config={myConfig}
-                      onClickNode={onClickNode}
-                      onNodePositionChange={onNodePositionChange}
-                      onMouseOverNode={onHoverNode}
-                      style={{}}
-                    >
-                    </Graph>
+                    <GraphPane updateNodeData={updateNodeData} Save={Save}/>
                     <ContextMenu></ContextMenu>
                   </div>
                   <PlanSelector></PlanSelector>
