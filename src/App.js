@@ -213,25 +213,23 @@ function App(props) {
       <AppDataManager.Provider value={{ appData, setAppData }}>
         <PopupManager.Provider value={{ popups, setPopups }}>
           <div style={{ margin: 0, padding: 0 }} className='App'>
-            <Nav></Nav>
-            <RegisterModal></RegisterModal>
+            <Nav/>
+            <RegisterModal/>
             {/* <Modal open={!appData.Data.nodes} style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}><CircularProgress style={{ width: '5vw', height: '5vw', outline: 'none' }}></CircularProgress></Modal> */}
             {appData.Data && appData.Data.nodes &&
               <>
                 <div style={{ display: 'flex', height: '95vh' }} className="App">
                   <div style={{ height: '100%', position: 'relative', width: '30vw', borderRight: '1px solid #e5e5e5' }} spellCheck='false'>
-                    <EditorPane updateNodeData={updateNodeData}></EditorPane>
+                    <EditorPane updateNodeData={updateNodeData}/>
                   </div>
                   <div id='ContextAnchor' onContextMenu={(e) => handleNodeRightClick(e)} style={{ width: '70vw', position: 'relative', marginLeft: '10vh', cursor: 'grab', background: '#F7F6F3', backgroundImage: 'radial-gradient(#d2d2d2 1px, transparent 0)', backgroundSize: '1vw 1vw', backgroundPosition: '-0.5vw -0.5vw' }}>
-                    <div style={{ display: 'flex', flexDirection: 'column', position: 'absolute', top: '2vh', left: '2vh', }}>
-                      <Analytics></Analytics>
-                    </div>
-                    <GraphPane updateNodeData={updateNodeData} Save={Save} />
-                    <ContextMenu></ContextMenu>
+                    <Analytics/>
+                    <GraphPane updateNodeData={updateNodeData} Save={Save}/>
+                    <ContextMenu/>
                   </div>
-                  <PlanSelector></PlanSelector>
-                  <NewNodePopup></NewNodePopup>
-                </div >
+                  <PlanSelector/>
+                  <NewNodePopup/>
+                </div>
               </>
             }
           </div>

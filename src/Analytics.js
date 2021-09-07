@@ -10,7 +10,7 @@ export default function Analytics() {
 
 
     return (
-        <>
+        <div style={{ display: 'flex', flexDirection: 'column', position: 'absolute', top: '2vh', left: '2vh', }}>
             <Button className='Analytics' id='Analytics'
                 onMouseLeave={() => setPopups(setPopupState('Analytics', false, popups))}
                 onClick={() => setPopups(setPopupState('Analytics', true, popups))}>
@@ -25,6 +25,6 @@ export default function Analytics() {
                     </div>
                 </div>
             </Popper>
-        </>
+        </div>
     )
 }
