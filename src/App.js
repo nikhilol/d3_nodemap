@@ -220,19 +220,13 @@ function App(props) {
               <>
                 <div style={{ display: 'flex', height: '95vh' }} className="App">
                   <div style={{ height: '100%', position: 'relative', width: '30vw', borderRight: '1px solid #e5e5e5' }} spellCheck='false'>
-                  <EditorPane updateNodeData={updateNodeData}></EditorPane>
+                    <EditorPane updateNodeData={updateNodeData}></EditorPane>
                   </div>
                   <div id='ContextAnchor' onContextMenu={(e) => handleNodeRightClick(e)} style={{ width: '70vw', position: 'relative', marginLeft: '10vh', cursor: 'grab', background: '#F7F6F3', backgroundImage: 'radial-gradient(#d2d2d2 1px, transparent 0)', backgroundSize: '1vw 1vw', backgroundPosition: '-0.5vw -0.5vw' }}>
                     <div style={{ display: 'flex', flexDirection: 'column', position: 'absolute', top: '2vh', left: '2vh', }}>
-                      <Button className='Analytics' id='Analytics'
-                        onMouseLeave={() => setPopups(setPopupState('Analytics', false, popups))}
-                        onClick={() => setPopups(setPopupState('Analytics', true, popups))}>
-                        <Timeline fontSize='large' style={{}} ></Timeline>
-                        <div className='inner' style={{ width: '0', overflow: 'hidden', opacity: 0 }}>Analytics</div>
-                      </Button>
                       <Analytics></Analytics>
                     </div>
-                    <GraphPane updateNodeData={updateNodeData} Save={Save}/>
+                    <GraphPane updateNodeData={updateNodeData} Save={Save} />
                     <ContextMenu></ContextMenu>
                   </div>
                   <PlanSelector></PlanSelector>
