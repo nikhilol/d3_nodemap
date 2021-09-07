@@ -88,15 +88,6 @@ const myConfig = {
 }
 
 function App(props) {
-
-  // const [data, setData] = useState({})
-  const [plans, setPlans] = useState([])
-  const [activeNode, setActiveNode] = useState(null)
-  const [mdValue, setMdValue] = useState([])
-
-
-  const [isEditing, setIsEditing] = useState(false)
-
   const [popups, setPopups] = useState({
     AddNode: false,
     PlanSelector: false,
@@ -144,12 +135,12 @@ function App(props) {
   //markdown timeout
   useEffect(() => {
     const delayDebounceFn = setTimeout(() => {
-      console.log(mdValue)
+      console.log(appData.MdValue)
       Save();
     }, 2000)
 
     return () => clearTimeout(delayDebounceFn)
-  }, [mdValue])
+  }, [appData.MdValue])
 
   //get nodes and links data
   useEffect(async () => {
