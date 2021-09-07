@@ -4,6 +4,7 @@ import PlanSelector from './PlanSelector'
 import NewNodePopup from './NewNodePopup'
 import RESOURCES from './Resources/resources'
 import RegisterModal from './RegisterModal';
+import EditorPane from './EditorPane'
 
 import React, { useState, useEffect } from 'react'
 import { PopupManager, setMultiPopupState, setPopupState } from './PopupManager';
@@ -11,7 +12,6 @@ import { Graph } from 'react-d3-graph'
 import { Menu, MenuItem, Button, CircularProgress, Modal, Popper } from '@material-ui/core'
 import { ExpandMore, Timeline } from '@material-ui/icons'
 import 'react-markdown-editor-lite/lib/index.css';
-import Editor from "rich-markdown-editor"
 import { UserManager } from './userManager';
 import { AppDataManager, setDataState, setMultiDataState } from './AppDataManager';
 import Nav from './Nav';
@@ -299,15 +299,6 @@ function App(props) {
     console.log(appData.Data)
   };
 
-  //markdown content change handler
-  function handleEditorChange(getText) {
-    const newValue = getText();
-    setMdValue(newValue)
-    if (activeNode) {
-      updateNodeData(activeNode.id, 'md', newValue)
-    }
-  }
-
   //context menu click handler
   function handleNodeRightClick(event) {
     event.preventDefault();
@@ -316,20 +307,6 @@ function App(props) {
       MouseY: event.clientY,
       ContextMenu: true
     }, popups))
-  }
-
-
-  async function uploadImage(file) {
-    try {
-      let ref = firebase.storage().ref().child(userData[0] ? userData.displayName : 'Nodemap' + '/' + file.name)
-      let snap = await ref.put(file)
-      if (snap)
-        return await ref.getDownloadURL()
-    }
-    catch (e) {
-      alert(e.message)
-      return
-    }
   }
 
   return (
@@ -344,24 +321,7 @@ function App(props) {
               <>
                 <div style={{ display: 'flex', height: '95vh' }} className="App">
                   <div style={{ height: '100%', position: 'relative', width: '30vw', borderRight: '1px solid #e5e5e5' }} spellCheck='false'>
-                    <Editor
-                      style={{ width: '100%', height: '100%', textAlign: 'left', background: '#FFF', borderRight: '1px solid #d2d3d4' }}
-                      value={appData.ActiveNode ? appData.ActiveNode.md : 'test'}
-                      defaultValue={appData.ActiveNode ? appData.ActiveNode.md : "# Hover over the start node for help with creating your plan #"}
-                      onChange={handleEditorChange}
-                      uploadImage={uploadImage}
-                      embeds={[
-                        {
-                          title: "Google Doc",
-                          keywords: "google docs gdocs",
-                          defaultHidden: false,
-                          matcher: href => href.match(/www.youtube.com\/embed\//i),
-                          href: href => href,
-                          component: Video
-                        }
-                      ]}
-                    >
-                    </Editor>
+                  <EditorPane updateNodeData={updateNodeData}></EditorPane>
                   </div>
                   <div id='ContextAnchor' onContextMenu={(e) => handleNodeRightClick(e)} style={{ width: '70vw', position: 'relative', marginLeft: '10vh', cursor: 'grab', background: '#F7F6F3', backgroundImage: 'radial-gradient(#d2d2d2 1px, transparent 0)', backgroundSize: '1vw 1vw', backgroundPosition: '-0.5vw -0.5vw' }}>
                     <div style={{ display: 'flex', flexDirection: 'column', position: 'absolute', top: '2vh', left: '2vh', }}>
@@ -395,21 +355,6 @@ function App(props) {
       </AppDataManager.Provider>
     </UserManager.Provider>
   );
-}
-
-const Video = (props) => {
-  return (
-    <div style={{ display: 'flex', justifyContent: 'center' }}>
-      <iframe style={{ height: '32vh', padding: '0', margin: 0 }} title='video'
-        src={props.attrs.href}
-        allowfullscreen="allowfullscreen"
-        mozallowfullscreen="mozallowfullscreen"
-        msallowfullscreen="msallowfullscreen"
-        oallowfullscreen="oallowfullscreen"
-        webkitallowfullscreen="webkitallowfullscreen">
-      </iframe>
-    </div>
-  )
 }
 
 
