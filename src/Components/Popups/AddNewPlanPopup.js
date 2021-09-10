@@ -38,13 +38,13 @@ export default function AddNewPlanPopup(props) {
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', margin: '10vh' }}>
                 <h3>Create a new custom plan by giving it a title:</h3>
                 <div style={{ display: 'flex', width: '100%' }}>
-                    <TextField size='small' variant='outlined' fullWidth placeholder={'New plan Title'} onChange={(e)=>{setAddvalue(e.target.value)}}></TextField>
-                    <Button disabled={appData.IsDemo} id='addText' onClick={Add} style={{ marginLeft: '-1vh', background: '#6930C3', color: 'white', width: '5vw', opacity: appData.IsDemo && '0.3' }}>Add</Button>
+                    <TextField disabled={appData.IsDemo} size='small' variant='outlined' fullWidth placeholder={'New plan Title'} onChange={(e)=>{setAddvalue(e.target.value)}}></TextField>
+                    <Button disabled={appData.IsDemo} id='addText' onClick={Add} style={{ marginLeft: '-1vh', background: appData.IsDemo ? '#e5e5e5' : '#6930C3', color: 'white', width: '5vw' }}>Add</Button>
                 </div>
                 <h3 style={{ marginTop: '10vh' }}>Or import a plan that you've found by pasting the plan link:</h3>
                 <div style={{ display: 'flex', width: '100%' }}>
-                    <TextField size='small' variant='outlined' fullWidth placeholder={'Plan URL'} onChange={(e)=>{setImportvalue(e.target.value)}}></TextField>
-                    <Button disabled={appData.IsDemo} id='importText' onClick={Import} style={{ marginLeft: '-1vh', background: '#6930C3', color: 'white', width: '5vw', opacity: appData.IsDemo && '0.3' }}>Import</Button>
+                    <TextField disabled={appData.IsDemo} size='small' variant='outlined' fullWidth placeholder={'Plan URL'} onChange={(e)=>{setImportvalue(e.target.value)}}></TextField>
+                    <Button disabled={appData.IsDemo} id='importText' onClick={Import} style={{ marginLeft: '-1vh', background: appData.IsDemo ? '#e5e5e5' : '#6930C3', color: 'white', width: '5vw' }}>Import</Button>
                 </div>
             </div>
             <DialogActions>
