@@ -3,6 +3,7 @@ import { Button, Dialog, DialogActions, TextField } from '@material-ui/core'
 import RESOURCES from '../../Resources/resources'
 import { PopupManager, setPopupState } from '../../Context/PopupManager'
 import { UserManager } from '../../Context/userManager'
+import { AppDataManager } from '../../Context/AppDataManager'
 
 const axios = require('axios')
 const firebase = require('firebase').default
@@ -13,6 +14,7 @@ export default function AddNewPlanPopup(props) {
     const [importValue, setImportvalue] = useState("")
     const {popups, setPopups} = useContext(PopupManager)
     const {userData} =  useContext(UserManager)
+    const {appData} =  useContext(AppDataManager)
 
     async function Add() {
         let res = await axios.post(`${RESOURCES.apiURL}/plans?user=${userData.displayName}&title=${addValue}`)
@@ -37,12 +39,12 @@ export default function AddNewPlanPopup(props) {
                 <h3>Create a new custom plan by giving it a title:</h3>
                 <div style={{ display: 'flex', width: '100%' }}>
                     <TextField size='small' variant='outlined' fullWidth placeholder={'New plan Title'} onChange={(e)=>{setAddvalue(e.target.value)}}></TextField>
-                    <Button id='addText' onClick={Add} style={{ marginLeft: '-1vh', background: '#6930C3', color: 'white', width: '5vw' }}>Add</Button>
+                    <Button disabled={appData.IsDemo} id='addText' onClick={Add} style={{ marginLeft: '-1vh', background: '#6930C3', color: 'white', width: '5vw', opacity: appData.IsDemo && '0.3' }}>Add</Button>
                 </div>
                 <h3 style={{ marginTop: '10vh' }}>Or import a plan that you've found by pasting the plan link:</h3>
                 <div style={{ display: 'flex', width: '100%' }}>
                     <TextField size='small' variant='outlined' fullWidth placeholder={'Plan URL'} onChange={(e)=>{setImportvalue(e.target.value)}}></TextField>
-                    <Button id='importText' onClick={Import} style={{ marginLeft: '-1vh', background: '#6930C3', color: 'white', width: '5vw' }}>Import</Button>
+                    <Button disabled={appData.IsDemo} id='importText' onClick={Import} style={{ marginLeft: '-1vh', background: '#6930C3', color: 'white', width: '5vw', opacity: appData.IsDemo && '0.3' }}>Import</Button>
                 </div>
             </div>
             <DialogActions>

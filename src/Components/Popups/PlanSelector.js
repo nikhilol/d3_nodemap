@@ -37,7 +37,7 @@ function PlanSelector(props) {
                         })
                     }
                     <Divider style={{ margin: '1vh' }}></Divider>
-                    <Button disabled={appData.IsDemo} style={{ color: 'white', backgroundColor: '#6930C3', margin: '0vh 1vh', opacity: appData.IsDemo && '0.3' }} onClick={() => { setPopups(setPopupState('AddPlan', true, popups)) }}>+ Add new plan</Button>
+                    <Button style={{ color: 'white', backgroundColor: '#6930C3', margin: '0vh 1vh' }} onClick={() => { setPopups(setPopupState('AddPlan', true, popups)) }}>+ Add new plan</Button>
                 </Menu>
             }
             <AddNewPlanPopup></AddNewPlanPopup>
