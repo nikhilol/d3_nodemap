@@ -7,8 +7,8 @@ import {
     Link
 } from "react-router-dom";
 import AddNewPlanPopup from './AddNewPlanPopup'
-import { PopupManager, setPopupState } from './PopupManager';
-import { AppDataManager } from './AppDataManager';
+import { PopupManager, setPopupState } from '../../Context/PopupManager';
+import { AppDataManager } from '../../Context/AppDataManager';
 
 function PlanSelector(props) {
 

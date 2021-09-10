@@ -1,8 +1,8 @@
 import React, { useContext, useState } from 'react'
 import { Button, Dialog, DialogActions, TextField } from '@material-ui/core'
-import RESOURCES from './Resources/resources'
-import { PopupManager, setPopupState } from './PopupManager'
-import { UserManager } from './userManager'
+import RESOURCES from '../../Resources/resources'
+import { PopupManager, setPopupState } from '../../Context/PopupManager'
+import { UserManager } from '../../Context/userManager'
 
 const axios = require('axios')
 const firebase = require('firebase').default

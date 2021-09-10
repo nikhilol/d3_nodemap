@@ -1,5 +1,5 @@
 import React, { useContext, useState } from 'react'
-import { PopupManager, setPopupState } from './PopupManager'
+import { PopupManager, setPopupState } from '../../Context/PopupManager'
 import { Popper, Button } from '@material-ui/core'
 import {Timeline} from '@material-ui/icons'
 

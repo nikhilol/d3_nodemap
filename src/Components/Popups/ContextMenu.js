@@ -1,6 +1,6 @@
 import React, { useContext } from 'react'
 import { MenuItem, Popover } from '@material-ui/core'
-import { PopupManager, setMultiPopupState, setPopupState } from './PopupManager'
+import { PopupManager, setMultiPopupState, setPopupState } from '../../Context/PopupManager'
 
 export default function ContextMenu() {
 

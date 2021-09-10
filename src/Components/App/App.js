@@ -1,22 +1,22 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import './App.css';
-import PlanSelector from './PlanSelector'
-import NewNodePopup from './NewNodePopup'
-import RESOURCES from './Resources/resources'
-import RegisterModal from './RegisterModal';
-import EditorPane from './EditorPane'
+import PlanSelector from '../Popups/PlanSelector'
+import NewNodePopup from '../Popups/NewNodePopup'
+import RESOURCES from '../../Resources/resources'
+import RegisterModal from '../Popups/RegisterModal';
 
 import React, { useState, useEffect } from 'react'
-import { PopupManager, setMultiPopupState, setPopupState } from './PopupManager';
+import { PopupManager, setMultiPopupState, setPopupState } from '../../Context/PopupManager';
 import { Menu, MenuItem, Button, CircularProgress, Modal, Popper } from '@material-ui/core'
 import { ExpandMore, Timeline } from '@material-ui/icons'
 import 'react-markdown-editor-lite/lib/index.css';
-import { UserManager } from './userManager';
-import { AppDataManager, setDataState, setMultiDataState } from './AppDataManager';
-import Nav from './Nav';
-import Analytics from './Analytics';
-import ContextMenu from './ContextMenu';
-import GraphPane from './GraphPane';
+import { UserManager } from '../../Context/userManager';
+import { AppDataManager, setDataState, setMultiDataState } from '../../Context/AppDataManager';
+import Nav from '../Navbar/Nav';
+import Analytics from '../Popups/Analytics';
+import ContextMenu from '../Popups/ContextMenu';
+import GraphPane from '../Panes/Graph/GraphPane';
+import EditorPane from '../Panes/Editor/EditorPane'
 
 const axios = require('axios').default
 const firebase = require("firebase").default

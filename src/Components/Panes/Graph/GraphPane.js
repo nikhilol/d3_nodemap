@@ -1,6 +1,6 @@
 import React, { useContext } from "react";
 import { Graph } from "react-d3-graph";
-import { AppDataManager, setMultiDataState } from "./AppDataManager";
+import { AppDataManager, setMultiDataState } from "../../../Context/AppDataManager";
 
 export default function GraphPane(props) {
 	const { appData, setAppData } = useContext(AppDataManager);

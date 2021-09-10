@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import Logo from './Images/LogoVertical.svg'
+import Logo from '../../Images/LogoVertical.svg'
 import { TextField, Button } from '@material-ui/core'
 
 const firebase = require('firebase');

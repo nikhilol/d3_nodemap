@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
-import App from './App';
-import Login from './Login'
+import App from './Components/App/App';
+import Login from './Components/Auth/Login'
 import reportWebVitals from './reportWebVitals';
 import { BrowserRouter as Router, Switch, Route, useParams, withRouter } from 'react-router-dom';
-import Signup from './Signup';
+import Signup from './Components/Auth/Signup';
 const firebase = require('firebase').default
 
 const app = firebase.initializeApp({

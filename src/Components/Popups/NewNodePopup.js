@@ -1,8 +1,8 @@
 import React, { useContext, useState } from 'react'
 import { Dialog, DialogContent, DialogTitle, Divider, DialogActions, Button, TextField } from '@material-ui/core'
 import NewNodeSearchSelector from './NewNodeSearchSelector'
-import { PopupManager, setPopupState } from './PopupManager'
-import { AppDataManager, setDataState } from './AppDataManager'
+import { PopupManager, setPopupState } from '../../Context/PopupManager'
+import { AppDataManager, setDataState } from '../../Context/AppDataManager'
 
 export default function NewPlanPopup(props) {
 

@@ -1,10 +1,10 @@
 import { render } from "@testing-library/react";
 import React, { useContext } from "react";
-import { AppDataManager } from "./AppDataManager";
-import { PopupManager, setPopupState } from "./PopupManager";
+import { AppDataManager } from "../../Context/AppDataManager";
+import { PopupManager, setPopupState } from "../../Context/PopupManager";
 import { Button } from '@material-ui/core'
 import { ExpandMore } from "@material-ui/icons";
-import { UserManager } from "./userManager";
+import { UserManager } from "../../Context/userManager";
 
 const firebase = require('firebase')
 

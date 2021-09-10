@@ -1,6 +1,6 @@
 import React, {useState, useContext} from 'react'
 import { Dialog, TextField, Button } from '@material-ui/core'
-import {PopupManager, setPopupState}  from './PopupManager'
+import {PopupManager, setPopupState}  from '../../Context/PopupManager'
 
 const firebase  = require('firebase').default
 

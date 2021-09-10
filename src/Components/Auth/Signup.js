@@ -1,7 +1,7 @@
 import React, {useEffect} from 'react';
-import Logo from './Images/LogoVertical.svg'
+import Logo from '../../Images/LogoVertical.svg'
 import { TextField, Button } from '@material-ui/core'
-import RESOURCES from './Resources/resources'
+import RESOURCES from '../../Resources/resources'
 
 const axios = require('axios')
 const firebase = require('firebase')

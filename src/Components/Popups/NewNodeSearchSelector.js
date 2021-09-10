@@ -1,6 +1,6 @@
 import React, {useState} from 'react'
 import { Accordion,MenuItem, MenuList, AccordionDetails, AccordionSummary, TextField} from '@material-ui/core'
-import nodeList from './Resources/Platforms.json'
+import nodeList from '../../Resources/Platforms.json'
 
 
 
