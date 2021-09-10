@@ -1,10 +1,12 @@
 import React, { useContext } from 'react'
 import { MenuItem, Popover } from '@material-ui/core'
 import { PopupManager, setMultiPopupState, setPopupState } from '../../Context/PopupManager'
+import { AppDataManager } from '../../Context/AppDataManager'
 
 export default function ContextMenu() {
 
     const { popups, setPopups } = useContext(PopupManager)
+    const {appData} = useContext(AppDataManager)
 
     //context menu close handler
     function handleContextMenuClose(Action) {

@@ -134,10 +134,10 @@ function App(props) {
   //save plan data to firebase
   function Save() {
     console.log('saving')
-    if (appData.Data && !props.demo) {
+    if (appData.Data && !appData.IsDemo) {
       axios({
         method: 'post',
-        url: `${RESOURCES.apiURL}/plans/update?user=${userData.displayName}&title=${props.plan}`,
+        url: `${RESOURCES.apiURL}/plans/update?user=${userData.displayName}&title=${appData.CurrentPlan}`,
         data: appData.Data
       }).then(res => {
         console.log(res.data);
