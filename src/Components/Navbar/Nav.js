@@ -15,7 +15,7 @@ export default function Nav(props) {
     const {userData, setUserData} = useContext(UserManager)
 
     async function logoutHandler() {
-        await firebase.auth().signOut()
+        await firebase.default.auth().signOut()
         window.location.assign('/login')
     }
 
