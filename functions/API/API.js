@@ -38,7 +38,7 @@ app.post("/signup", async (req, res) => {
             displayName: Username,
         });
         let data;
-        await firebase.firestore().collection("Users").doc("Nodemap").collection("Plans").doc("Your first plan!").get().then((doc) => {
+        await firebase.firestore().collection("Users").doc("Demo1").collection("Plans").doc("Your first plan!").get().then((doc) => {
             data = doc.data();
             console.log(data);
         });
