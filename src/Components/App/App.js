@@ -51,10 +51,14 @@ function App(props) {
       setUserData(user)
       if (!props.userID) {
         window.location.assign('/plan/' + user.displayName)
+      } else if(props.userID !== user.displayName ){
+        //NOT OWNER
+        //POPUP ACCESS CODE REQUEST
       }
     }
-    else if (props.userID === 'Demo1' && props.plan) { return }
-    else { window.location.assign('/login') }
+    //if no user
+    //popup access code, if pass, let user view plan 
+
   })
 
   //save when data changes
@@ -88,11 +92,14 @@ function App(props) {
       }
       _plans = plans.data
     })
+    await axios.get(`${RESOURCES.apiURL}/privacy?user=${props.userID}&title=${props.plan}`).then(data=>{
+      console.log(data)
+    })
     await axios.get(`${RESOURCES.apiURL}/plans/nodes?user=${props.userID}&title=${props.plan}`).then(data => {
       console.log('REQUEST:', data)
       if (data.data) {
         if (mounted) {
-          console.log('DATA:', data.data.nodes.nodes)
+          console.log('DATA:', data.data)
           setAppData(setMultiDataState({ Data: { ...data.data.nodes }, Plans: _plans, ActiveNode: data.data.nodes.nodes[0] }, appData))
         }
       }
@@ -134,7 +141,7 @@ function App(props) {
   //save plan data to firebase
   function Save() {
     console.log('saving')
-    if (appData.Data && !appData.IsDemo) {
+    if (appData.Data && !appData.IsDemo && userData.displayName) {
       axios({
         method: 'post',
         url: `${RESOURCES.apiURL}/plans/update?user=${userData.displayName}&title=${appData.CurrentPlan}`,

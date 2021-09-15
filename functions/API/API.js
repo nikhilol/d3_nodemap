@@ -140,6 +140,13 @@ app.post("/plans", async (req, res) => {
     res.send(200);
 });
 
+app.get('/privacy', async (req, res)=>{
+    const { user, title } = req.query;
+    await firebase.firestore().collection("Users").doc(user).get().then(doc=>{
+        res.send(doc.data().Privates.includes(title))
+    })
+})
+
 app.get("/blogPosts", async (req, res)=>{
     const result = await parse("https://medium.com/feed/@nodemap");
     res.send(JSON.stringify(result, null, 3));
