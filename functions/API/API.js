@@ -142,8 +142,14 @@ app.post("/plans", async (req, res) => {
 
 app.get('/privacy', async (req, res)=>{
     const { user, title } = req.query;
+    let flag = false;
     await firebase.firestore().collection("Users").doc(user).get().then(doc=>{
-        res.send(doc.data().Privates.includes(title))
+        doc.data().Privates.forEach(item=>{
+            if(item.Title === title){
+                flag = true;
+            }
+        })
+        flag ? res.send(true) : res.send(false)
     })
 })
 
