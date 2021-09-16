@@ -17,12 +17,16 @@ import Analytics from '../Popups/Analytics';
 import ContextMenu from '../Popups/ContextMenu';
 import GraphPane from '../Panes/Graph/GraphPane';
 import EditorPane from '../Panes/Editor/EditorPane'
+import AccessCode from '../Popups/AccessCode';
 
 const axios = require('axios').default
 const firebase = require("firebase").default
 
 
 function App(props) {
+
+  const [isPrivate, setIsPrivate] = useState(true)
+
   const [popups, setPopups] = useState({
     AddNode: false,
     PlanSelector: false,
@@ -32,6 +36,7 @@ function App(props) {
     ContextMenu: false,
     MouseX: 0,
     MouseY: 0,
+    AccessCode: false,
   })
 
   const [userData, setUserData] = useState({})
@@ -83,7 +88,6 @@ function App(props) {
 
   //get nodes and links data
   useEffect(async () => {
-    let mounted = true;
     let _plans = []
     await axios.get(`${RESOURCES.apiURL}/plans?user=${props.userID}`).then(plans => {
       console.log(plans.data)
@@ -91,28 +95,26 @@ function App(props) {
         window.location.assign(`/plan/${props.userID}/${plans.data[0]}`)
       }
       _plans = plans.data
+      setAppData(setDataState('Plans', _plans, appData))
     })
     await axios.get(`${RESOURCES.apiURL}/privacy?user=${props.userID}&title=${props.plan}`).then(data=>{
       console.log(data)
       if(data.data){
         //it is private
         //open popup
+        setPopups(setPopupState("AccessCode", true, popups))
       } else{
         //not private
-        getNodeData()
+        console.log('HIT')
+        getNodeData(_plans)
       }
     })
-    return () => mounted = false;
   }, [props])
 
-  function getNodeData(){
+  async function getNodeData(_plans){
     await axios.get(`${RESOURCES.apiURL}/plans/nodes?user=${props.userID}&title=${props.plan}`).then(data => {
-      console.log('REQUEST:', data)
       if (data.data) {
-        if (mounted) {
-          console.log('DATA:', data.data)
           setAppData(setMultiDataState({ Data: { ...data.data.nodes }, Plans: _plans, ActiveNode: data.data.nodes.nodes[0] }, appData))
-        }
       }
     })
   }
@@ -250,6 +252,7 @@ function App(props) {
               </>
             }
           </div>
+          <AccessCode getNodes={getNodeData}></AccessCode>
         </PopupManager.Provider>
       </AppDataManager.Provider>
     </UserManager.Provider>

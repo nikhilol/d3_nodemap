@@ -6,7 +6,7 @@ import { Button } from '@material-ui/core'
 import { ExpandMore } from "@material-ui/icons";
 import { UserManager } from "../../Context/userManager";
 
-const firebase = require('firebase')
+const firebase = require('firebase').default
 
 export default function Nav(props) {
 
