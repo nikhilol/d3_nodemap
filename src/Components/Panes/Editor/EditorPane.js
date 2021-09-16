@@ -4,7 +4,7 @@ import { UserManager } from '../../../Context/userManager'
 import Editor from "rich-markdown-editor"
 
 
-const firebase = require('firebase')
+const firebase = require('firebase').default
 
 export default function EditorPane(props) {
 
@@ -36,6 +36,8 @@ export default function EditorPane(props) {
 
     return (
         <Editor
+            readOnly={userData.displayName !== appData.UserIDRoute}
+            readOnlyWriteCheckboxes={true}
             style={{ width: '100%', height: '100%', textAlign: 'left', background: '#FFF', borderRight: '1px solid #d2d3d4' }}
             value={appData.ActiveNode ? appData.ActiveNode.md : 'test'}
             defaultValue={appData.ActiveNode ? appData.ActiveNode.md : "# Hover over the start node for help with creating your plan #"}
