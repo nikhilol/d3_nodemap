@@ -94,7 +94,18 @@ function App(props) {
     })
     await axios.get(`${RESOURCES.apiURL}/privacy?user=${props.userID}&title=${props.plan}`).then(data=>{
       console.log(data)
+      if(data.data){
+        //it is private
+        //open popup
+      } else{
+        //not private
+        getNodeData()
+      }
     })
+    return () => mounted = false;
+  }, [props])
+
+  function getNodeData(){
     await axios.get(`${RESOURCES.apiURL}/plans/nodes?user=${props.userID}&title=${props.plan}`).then(data => {
       console.log('REQUEST:', data)
       if (data.data) {
@@ -104,8 +115,7 @@ function App(props) {
         }
       }
     })
-    return () => mounted = false;
-  }, [props])
+  }
 
   //update a node property helper function
   function updateNodeData(nodeId, property, newValue) {
