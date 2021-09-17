@@ -144,7 +144,7 @@ app.post("/privacy", async (req, res) => {
   const { user, title, password } = req.query;
   let flag = false;
   await firebase.firestore().collection("Users").doc(user).get().then((doc) => {
-      if (doc.data()) {
+      if (doc.data() && doc.data().Privates) {
         doc.data().Privates.forEach((item) => {
           if (item.Title === title && item.Password === password) {
             flag = true;
@@ -159,7 +159,7 @@ app.get("/privacy", async (req, res) => {
   const { user, title } = req.query;
   let flag = false;
   await firebase.firestore().collection("Users").doc(user).get().then((doc) => {
-      if (doc.data()) {
+      if (doc.data() && doc.data().Privates) {
         doc.data().Privates.forEach((item) => {
           if (item.Title === title) {
             flag = true;

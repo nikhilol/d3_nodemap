@@ -115,8 +115,8 @@ function App(props) {
     await axios.get(`${RESOURCES.apiURL}/plans/nodes?user=${props.userID}&title=${props.plan}`).then(data => {
       if (data.data) {
           setAppData(setMultiDataState({ Data: { ...data.data.nodes }, Plans: _plans, ActiveNode: data.data.nodes.nodes[0] }, appData))
-      }
-    })
+        }
+      })
   }
 
   //update a node property helper function
@@ -234,7 +234,7 @@ function App(props) {
           <div style={{ margin: 0, padding: 0 }} className='App'>
             <Nav/>
             <RegisterModal/>
-            {/* <Modal open={!appData.Data.nodes} style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}><CircularProgress style={{ width: '5vw', height: '5vw', outline: 'none' }}></CircularProgress></Modal> */}
+            <Modal open={!appData.Data.nodes} style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}><CircularProgress style={{ width: '5vw', height: '5vw', outline: 'none' }}></CircularProgress></Modal>
             {appData.Data && appData.Data.nodes &&
               <>
                 <div style={{ display: 'flex', height: '95vh' }} className="App">
