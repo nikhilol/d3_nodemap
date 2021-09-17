@@ -234,7 +234,7 @@ function App(props) {
           <div style={{ margin: 0, padding: 0 }} className='App'>
             <Nav/>
             <RegisterModal/>
-            <Modal open={!appData.Data.nodes} style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}><CircularProgress style={{ width: '5vw', height: '5vw', outline: 'none' }}></CircularProgress></Modal>
+            <Modal hideBackdrop open={!appData.Data.nodes} style={{background:'#F7F6F3', display: 'flex', justifyContent: 'center', alignItems: 'center' }}><CircularProgress style={{ width: '5vw', height: '5vw', outline: 'none' }}></CircularProgress></Modal>
             {appData.Data && appData.Data.nodes &&
               <>
                 <div style={{ display: 'flex', height: '95vh' }} className="App">
