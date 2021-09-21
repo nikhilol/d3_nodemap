@@ -25,8 +25,6 @@ const firebase = require("firebase").default
 
 function App(props) {
 
-  const [isPrivate, setIsPrivate] = useState(true)
-
   const [popups, setPopups] = useState({
     AddNode: false,
     PlanSelector: false,
@@ -37,6 +35,7 @@ function App(props) {
     MouseX: 0,
     MouseY: 0,
     AccessCode: false,
+    LoginPrompt: true
   })
 
   const [userData, setUserData] = useState({})

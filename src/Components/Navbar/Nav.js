@@ -5,6 +5,7 @@ import { PopupManager, setPopupState } from "../../Context/PopupManager";
 import { Button } from '@material-ui/core'
 import { ExpandMore } from "@material-ui/icons";
 import { UserManager } from "../../Context/userManager";
+import LoginPrompt from "../Popups/LoginPrompt";
 
 const firebase = require('firebase').default
 
@@ -28,8 +29,9 @@ export default function Nav(props) {
                 appData.IsDemo ?
                     <Button style={{ background: '#6930C3', color: 'white', position: 'absolute', right: '1vh' }} onClick={() => setPopups(setPopupState('Register', true, popups))}>Sign up</Button>
                     :
-                    <Button style={{ background: '#6930C3', color: 'white', position: 'absolute', right: '1vh' }} onClick={() => setPopups(setPopupState('Register', true, popups))}>Log in</Button>
+                    <Button id='LoginButton' style={{ background: '#6930C3', color: 'white', position: 'absolute', right: '1vh' }} onClick={() => setPopups(setPopupState('Register', true, popups))}>Log in</Button>
             }
+            <LoginPrompt></LoginPrompt>
         </nav>
     )
 }
