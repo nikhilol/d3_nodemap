@@ -12,19 +12,25 @@ export default function LoginPrompt(){
                 <h2 style={{fontWeight:'lighter', color:'#555555', marginBottom:'4vh'}}>Log in to get the most out of this resource!</h2>
                 <div style={{display:'flex', justifyContent:'space-evenly', width:'100%', color:'#444444', fontWeight:'lighter', marginBottom:'5vh'}}>
                     <Paper style={{border:'1px solid #e5e5e5', borderRadius:'10px', padding:'1vw 2vw', margin:'1vh'}}>
-                        <h3 style={{fontWeight:'lighter'}}>Track your progress</h3>
+                        <h3 style={{fontWeight:'lighter', fontFamily:'Permanent Marker'}}>Track your progress</h3>
                         <Divider></Divider>
-                        <p style={{fontFamily:"'Poppins' !important"}}>Some content Some content Some content Some content Some content Some content Some content Some content</p>
+                        <div className='Login'>
+                            <p style={{fontWeight:'normal'}}>Some content Some content Some content Some content Some content Some content Some content Some content</p>
+                        </div>
                     </Paper>
                     <Paper style={{border:'1px solid #e5e5e5', borderRadius:'10px', padding:'1vw 2vw', margin:'1vh'}}>
                         <h3 style={{fontWeight:'lighter'}}>Make extra notes</h3>
                         <Divider></Divider>
-                        <p>Some content Some content Some content Some content Some content Some content Some content Some content</p>
+                        <div className='Login'>
+                            <p style={{fontWeight:'normal'}}>Some content Some content Some content Some content Some content Some content Some content Some content</p>
+                        </div>
                     </Paper>
                     <Paper style={{border:'1px solid #e5e5e5', borderRadius:'10px', padding:'1vw 2vw', margin:'1vh'}}>
                         <h3 style={{fontWeight:'lighter'}}>Tweak it</h3>
                         <Divider></Divider>
-                        <p>Some content Some content Some content Some content Some content Some content Some content Some content</p>
+                        <div className='Login'>
+                            <p style={{fontWeight:'normal'}}>Some content Some content Some content Some content Some content Some content Some content Some content</p>
+                        </div>
                     </Paper>
                 </div>
                 <div style={{display:'flex', width:'60%', marginBottom:'2vh', justifySelf:'flex-end'}}>
