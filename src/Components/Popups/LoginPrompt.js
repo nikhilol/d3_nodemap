@@ -11,7 +11,7 @@ export default function LoginPrompt(){
 
     return(
         <Dialog maxWidth='lg' fullWidth hideBackdrop style={{background:'rgba(247, 246, 243, 0.5)', backdropFilter: 'blur(4px)', border:'1px solid #e5e5e5'}} open={popups.LoginPrompt} PaperProps={{elevation:'1'}} onClose={()=>setPopups(setPopupState('LoginPrompt', false, popups))}>
-            <div style={{display:'flex', padding:'10vh 5vh', paddingBottom:'3vh', flexDirection:'column', alignItems:'center', justifyContent:'space-between', height:'auto', textAlign:'center'}}>
+            <div style={{display:'flex', padding:'5vh', paddingBottom:'3vh', flexDirection:'column', alignItems:'center', justifyContent:'space-between', height:'auto', textAlign:'center'}}>
                 <h2 style={{fontWeight:'lighter', color:'#555555', marginBottom:'4vh'}}>Log in to get the most out of this resource!</h2>
                 <div style={{display:'flex', justifyContent:'space-evenly', width:'100%', color:'#444444', fontWeight:'lighter', marginBottom:'5vh', height:'auto'}}>
                     <Paper style={{border:'1px solid #e5e5e5', borderRadius:'10px', padding:'1vw 2vw', margin:'1vh', height:'auto'}}>
