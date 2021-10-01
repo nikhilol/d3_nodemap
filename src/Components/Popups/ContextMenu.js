@@ -25,7 +25,7 @@ export default function ContextMenu() {
             id='ContextMenu'
             keepMounted
             open={popups.ContextMenu}
-            onClose={handleContextMenuClose}
+            onClose={()=>setPopups(setPopupState('ContextMenu', false, popups))}
             anchorReference="anchorPosition"
             anchorPosition={{ top: popups.MouseY, left: popups.MouseX }}
         >

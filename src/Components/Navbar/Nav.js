@@ -21,15 +21,15 @@ export default function Nav(props) {
     }
 
     return (
-        <nav style={{ height: '5vh', background: '#F5F5F5', borderBottom: '1px solid #e5e5e5', display: 'flex', justifyContent: 'center', alignItems: 'center' }} className="App">
-            <h2 style={{ cursor: 'pointer', position: 'relative', color: '#2b2b2b', display: 'flex', alignItems: 'center', fontWeight: 'lighter' }} onClick={() => setPopups(setPopupState('PlanSelector', true, popups))}>{appData.CurrentPlan}<ExpandMore id='planTitle'></ExpandMore></h2>
+        <nav style={{ height: '5vh', background: '#2b2b2b', borderBottom: '1px solid #e5e5e5', display: 'flex', justifyContent: 'center', alignItems: 'center' }} className="App">
+            <h2 style={{ cursor: 'pointer', position: 'relative', color: '#F7F6F3', display: 'flex', alignItems: 'center', fontWeight: 'lighter' }} onClick={() => setPopups(setPopupState('PlanSelector', true, popups))}>{appData.CurrentPlan}<ExpandMore id='planTitle'></ExpandMore></h2>
             {userData.displayName ?
                 <Button style={{ background: '#ff6666', color: 'white', position: 'absolute', right: '1vh' }} onClick={logoutHandler}>Log out</Button>
                 :
                 appData.IsDemo ?
-                    <Button style={{ background: '#6930C3', color: 'white', position: 'absolute', right: '1vh' }} onClick={() => setPopups(setPopupState('Register', true, popups))}>Sign up</Button>
+                    <Button style={{ background: '#6930C3', color: 'white', position: 'absolute', right: '1vh' }} onClick={() => window.location.assign('/signup')}>Sign up</Button>
                     :
-                    <Button id='LoginButton' style={{ background: '#6930C3', color: 'white', position: 'absolute', right: '1vh' }} onClick={() => setPopups(setPopupState('Register', true, popups))}>Log in</Button>
+                    <Button id='LoginButton' style={{ background: '#6930C3', color: 'white', position: 'absolute', right: '1vh' }} onClick={() => window.location.assign('/login')}>Log in</Button>
             }
             <LoginPrompt></LoginPrompt>
         </nav>

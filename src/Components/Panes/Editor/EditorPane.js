@@ -13,7 +13,7 @@ export default function EditorPane(props) {
 
     async function uploadImage(file) {
         try {
-            let ref = firebase.storage().ref().child(userData[0] ? userData.displayName : 'Nodemap' + '/' + file.name)
+            let ref = firebase.storage().ref().child(userData[0] ? userData.displayName : 'userData.displayName/' + file.name)
             let snap = await ref.put(file)
             if (snap)
                 return await ref.getDownloadURL()

@@ -27,9 +27,9 @@ export default function AccessCode(props){
     return(
         <Dialog hideBackdrop style={{background:'#F7F6F3', border:'1px solid #e5e5e5'}} open={popups.AccessCode} PaperProps={{elevation:'1'}}>
             <div style={{display:'flex', flexDirection:'column', padding:'10vh'}}>
-                <img style={{maxHeight:'30vh'}} src={AccessCodeImg}></img>
+                <img style={{maxHeight:'30vh'}} src={AccessCodeImg} alt=""></img>
                 <p style={{textAlign:'center', margin:'5vh 0'}}>This content has been restricted by the creator. Enter the password to gain access!</p>
-                <TextField style={{marginBottom:'1vh'}} variant='outlined' size='small' label='Password' error={error} helperText={error && 'Password incorrect, try again!'} type='password' onChange={(e)=>setText(e.target.value)}></TextField>
+                <TextField className='Login' style={{marginBottom:'1vh'}} variant='outlined' size='small' label='Password' error={error} helperText={error && 'Password incorrect, try again!'} type='password' onChange={(e)=>setText(e.target.value)}></TextField>
                 <Button disabled={!text.length} style={{background: text.length ? '#6930C3' : '#F7F6F3', color: text.length ? 'white' : 'black'}} onClick={Submit}>submit</Button>
             </div>
         </Dialog>

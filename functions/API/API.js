@@ -140,6 +140,28 @@ app.post("/plans", async (req, res) => {
   res.send(200);
 });
 
+app.get("/nodes/custom", async (req, res)=>{
+  const {user} = req.query;
+  const data = [];
+  await firebase.firestore().collection("Users").doc(user).collection("CustomNodes").get().then((snap)=>{
+    snap.forEach((doc)=>{
+      if (doc.data()) {
+        data.push(doc.data());
+      }
+    });
+  });
+  res.send(data);
+});
+
+app.post("/nodes/custom", async (req, res)=>{
+  const {user, title, imgUrl} = req.query;
+  await firebase.firestore().collection("Users").doc(user).collection("CustomNodes").doc(title).set({
+    Title: title,
+    Url: imgUrl,
+  }, {merge: true});
+  res.send(200);
+});
+
 app.post("/privacy", async (req, res) => {
   const { user, title, password } = req.query;
   let flag = false;
