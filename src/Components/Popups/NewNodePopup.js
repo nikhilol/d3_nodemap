@@ -1,7 +1,7 @@
 import React, { useContext, useState } from 'react'
 import { Dialog, DialogContent, DialogTitle, Divider, DialogActions, Button, TextField } from '@material-ui/core'
 import NewNodeSearchSelector from './NewNodeSearchSelector'
-import { PopupManager, setPopupState } from '../../Context/PopupManager'
+import { PopupManager, setMultiPopupState, setPopupState } from '../../Context/PopupManager'
 import { AppDataManager, setDataState } from '../../Context/AppDataManager'
 
 export default function NewPlanPopup(props) {
@@ -24,18 +24,17 @@ export default function NewPlanPopup(props) {
             } else {
                 AddNode();
             }
-            setPopups(setPopupState('AddNode', false, popups))
+            setPopups(setMultiPopupState({'AddNode' :  false, 'Editing' : false}, popups))
         }
     }
 
     //update a node property helper function
     function updateNodeData(nodeId, property, newValue) {
         let temp = { ...appData.Data }
-        console.log('test', temp.nodes)
+        console.log(temp)
         for (let key in temp.nodes) {
+            console.log('........', temp.nodes[key].id, nodeId)
             if (temp.nodes[key].id === nodeId) {
-                //if new value is a bool return the opposite of this value
-                //else return the newvalue to th3e property
                 if (newValue === 'BOOL') {
                     temp.nodes[key][property] = !temp.nodes[key][property]
                     updateLinkColour(nodeId, temp.nodes[key][property])
@@ -44,6 +43,7 @@ export default function NewPlanPopup(props) {
                 console.log(`Updating ${nodeId}'s property ${property} to ${newValue}`)
             }
         }
+        console.log(temp)
         setAppData(setDataState('Data', { ...temp }, appData))
     };
 
@@ -89,9 +89,9 @@ export default function NewPlanPopup(props) {
                         temp.nodes[key].y = temp.nodes[key - 1].fy ? temp.nodes[key - 1].fy + 200 : temp.nodes[key - 1].y + 200;
                     }
 
-                    temp.nodes[key].Platform = platform.split(0, -4)
-                    temp.nodes[key].svg = `/Logos/${platform}`
-                    temp.nodes[key].md = `### ${platform.replace('.png', '')} ### \n # ${title} # \n --- `
+                    temp.nodes[key].Platform = platform.includes('https') ?  platform : platform.split(0, -4)
+                    temp.nodes[key].svg = platform.includes('https') ?  platform  : `https://firebasestorage.googleapis.com/v0/b/nodemap-app.appspot.com/o/Nodes%2F${platform.split(0, -4)}.svg?alt=media&token=abc2964c-b9e2-4837-bca1-84d46025f806`
+                    temp.nodes[key].md = `### ${platform.includes('https') ? '' : platform.replace('.png', '')} ### \n # ${title} # \n --- `
 
                     temp.links.push({ source: temp.nodes[key - 1].id, target: temp.nodes[key].id, color: '#D2D2D2' })
                     console.log('TEMP', temp)
@@ -111,25 +111,25 @@ export default function NewPlanPopup(props) {
         return randomString
     }
 
-    function EditNode(platform) {
-        updateNodeData(appData.ActiveNode, 'Platform', platform)
-        updateNodeData(appData.ActiveNode, 'svg', '/Logos/' + platform)
+    function EditNode(_platform) {
+        updateNodeData(appData.ActiveNode.id, 'Platform', _platform)
+        updateNodeData(appData.ActiveNode.id, 'svg', platform.includes('https') ? platform  : `https://firebasestorage.googleapis.com/v0/b/nodemap-app.appspot.com/o/Nodes%2F${platform}.svg?alt=media&token=abc2964c-b9e2-4837-bca1-84d46025f806`)
     }
 
     return (
-        <Dialog open={popups.AddNode} maxWidth='md' fullWidth>
+        <Dialog open={popups.AddNode} maxWidth='md' fullWidth bodyStyle={{background:'blue'}}>
             <DialogTitle style={{ background: '#2b2b2b', color: 'white' }}>Select your new node</DialogTitle>
             <Divider />
             <DialogContent style={{ minHeight: '60vh', maxHeight: '60vh' }}>
                 <div style={{ display: 'flex', height: '60vh' }}>
-                    <NewNodeSearchSelector onSelect={(platform, type) => setPlatform(type === 'Custom' ? platform + '.png' : platform)}></NewNodeSearchSelector>
+                    <NewNodeSearchSelector onSelect={(platform, type, node) => setPlatform(type === 'Custom' ? node.Url : platform)}></NewNodeSearchSelector>
                     <div style={{ margin: '1vh' }}>
                         <Divider orientation='vertical'></Divider>
                     </div>
                     <div style={{ width: '70%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'space-around', padding: '5vh' }}>
                         <div style={{ position: 'absolute', width: '10px', height: '50%', background: '#d2d2d2', zIndex: '0', top: 0 }}></div>
                         {platform ?
-                            <img alt={platform} style={{ zIndex: '3', maxHeight: '10vw', width: '10vw', height: '10vw', borderRadius: '50%', transition: '0.5s', transformOrigin: 'center', transitionDelay: '0.1s', border: '10px solid transparent' }} src={'/Logos/' + platform}></img>
+                            <img alt={platform} style={{ zIndex: '3', maxHeight: '10vw', width: '10vw', height: '10vw', borderRadius: '50%', transition: '0.5s', transformOrigin: 'center', transitionDelay: '0.1s', border: '10px solid transparent' }} src={platform.includes('https') ? platform : `https://firebasestorage.googleapis.com/v0/b/nodemap-app.appspot.com/o/Nodes%2F${platform}.svg?alt=media&token=abc2964c-b9e2-4837-bca1-84d46025f806`}></img>
                             :
                             <div style={{ zIndex: '3', background: 'white', maxHeight: '10vw', width: '10vw', height: '10vw', borderRadius: '50%', transition: '0.5s', transformOrigin: 'center', transitionDelay: '0.1s', border: platformError ? '4px dashed red' : '4px dashed #D2D2D2', textAlign: 'center', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', fontSize: '10vh', color: '#D2D2D2' }}>?</div>
                         }

@@ -15,7 +15,7 @@ export default function ContextMenu() {
             MouseY: 0,
             ContextMenu: false,
             AddNode: true,
-            Editing: Action ===  'Editing'
+            Editing: Action === 'Editing'
         }, popups))
     }
 
