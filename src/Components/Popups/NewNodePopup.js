@@ -117,7 +117,7 @@ export default function NewPlanPopup(props) {
     }
 
     return (
-        <Dialog open={popups.AddNode} maxWidth='md' fullWidth bodyStyle={{background:'blue'}}>
+        <Dialog open={popups.AddNode} maxWidth='md' fullWidth PaperProps={{style:{background:'#F7F6F3'}}}>
             <DialogTitle style={{ background: '#2b2b2b', color: 'white' }}>Select your new node</DialogTitle>
             <Divider />
             <DialogContent style={{ minHeight: '60vh', maxHeight: '60vh' }}>

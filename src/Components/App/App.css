@@ -103,3 +103,7 @@ a {
   width: auto !important;
   transition: 0.25s;
 }
+
+.MuiList-padding{
+  padding: 0 !important
+}
