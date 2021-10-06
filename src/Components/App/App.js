@@ -18,6 +18,7 @@ import ContextMenu from '../Popups/ContextMenu';
 import GraphPane from '../Panes/Graph/GraphPane';
 import EditorPane from '../Panes/Editor/EditorPane'
 import AccessCode from '../Popups/AccessCode';
+import AddCustomNode from '../Popups/AddCustomNode';
 
 const axios = require('axios').default
 const firebase = require("firebase").default
@@ -247,6 +248,7 @@ function App(props) {
                   </div>
                   <PlanSelector/>
                   <NewNodePopup/>
+                  <AddCustomNode></AddCustomNode>
                 </div>
               </>
             }
