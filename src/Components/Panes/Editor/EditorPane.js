@@ -77,7 +77,6 @@ const Youtube = (props) => {
                 oallowfullscreen="oallowfullscreen"
                 webkitallowfullscreen="webkitallowfullscreen">
             </iframe>
-
         </div>
     )
 }

@@ -40,7 +40,6 @@ app.post("/signup", async (req, res) => {
     let data;
     await firebase.firestore().collection("Users").doc("Demo1").collection("Plans").doc("Your first plan!").get().then((doc) => {
         data = doc.data();
-        console.log(data);
       });
     await firebase.firestore().collection("Users").doc(Username).collection("Plans").doc("Your first plan!").set(data);
     res.send(200);
@@ -127,8 +126,8 @@ app.post("/plans", async (req, res) => {
             Platform: "Start",
             id: "Start",
             // eslint-disable-next-line quotes
-            md: `### Start ### \n # This is the start of your new plan! # \n --- `,
-            svg: "/Logos/Start.png",
+            md: `Right click the start node to add more nodes!`,
+            svg: "https://firebasestorage.googleapis.com/v0/b/nodemap-app.appspot.com/o/Nodes%2FStart.svg?alt=media&token=abc2964c-b9e2-4837-bca1-84d46025f806",
             x: 575,
             y: 95,
             fx: 575,
