@@ -34,6 +34,10 @@ export default function AddCustomNode() {
                 uploadTask.snapshot.ref.getDownloadURL().then(async (downloadURL) => {
                     if(downloadURL){
                         let res = await axios.post(`${RESOURCES.apiURL}/nodes/custom?user=${userData.displayName}&title=${title}&imgUrl=${ encodeURI(downloadURL + '?alt=media')}`)
+                        console.log(res)
+                        if(res.status == 200){
+                            setPopups(setPopupState('AddCustomNode', false, popups))
+                        }
                     }
                 });
             }
