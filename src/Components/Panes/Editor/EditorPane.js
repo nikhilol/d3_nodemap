@@ -45,12 +45,20 @@ export default function EditorPane(props) {
             uploadImage={uploadImage}
             embeds={[
                 {
-                    title: "Google Doc",
-                    keywords: "google docs gdocs",
+                    title: "Youtube",
+                    keywords: "youtube",
                     defaultHidden: false,
-                    matcher: href => href.match(/www.youtube.com\/embed\//i),
+                    matcher: href => href.match(/youtube.com\/embed\//i),
                     href: href => href,
-                    component: Video
+                    component: Youtube
+                },
+                {
+                    title: "Vimeo",
+                    keywords: "Vimeo",
+                    defaultHidden: false,
+                    matcher: href => href.match(/vimeo.com\//i),
+                    href: href => href,
+                    component: Vimeo
                 }
             ]}
         >
@@ -58,7 +66,7 @@ export default function EditorPane(props) {
     )
 }
 
-const Video = (props) => {
+const Youtube = (props) => {
     return (
         <div style={{ display: 'flex', justifyContent: 'center' }}>
             <iframe style={{ height: '32vh', padding: '0', margin: 0 }} title='video'
@@ -68,6 +76,24 @@ const Video = (props) => {
                 msallowfullscreen="msallowfullscreen"
                 oallowfullscreen="oallowfullscreen"
                 webkitallowfullscreen="webkitallowfullscreen">
+            </iframe>
+
+        </div>
+    )
+}
+
+const Vimeo = (props) => {
+    return (
+        <div style={{ display: 'flex', justifyContent: 'center' }}>
+            <iframe style={{ height: '32vh', padding: '0', margin: 0 }} title='video'
+                src={props.attrs.href.replace('vimeo', 'player.vimeo').replace('.com', '.com/video')}
+                allowfullscreen="allowfullscreen"
+                mozallowfullscreen="mozallowfullscreen"
+                msallowfullscreen="msallowfullscreen"
+                oallowfullscreen="oallowfullscreen"
+                webkitallowfullscreen="webkitallowfullscreen"
+                frameBorder="0" 
+                >
             </iframe>
         </div>
     )

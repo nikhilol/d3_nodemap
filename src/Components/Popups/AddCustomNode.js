@@ -13,7 +13,7 @@ export default function AddCustomNode(){
     const { popups, setPopups } = useContext(PopupManager)
 
     return(
-        <Dialog open fullWidth maxWidth='sm'>
+        <Dialog open={false} fullWidth maxWidth='sm'>
             <div style={{padding:'10vh'}}>
                 <div style={{ width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'space-around' }}>
                         <div style={{ position: 'absolute', width: '10px', height: '50%', background: '#d2d2d2', zIndex: '0', top: 0 }}></div>
