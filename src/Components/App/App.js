@@ -36,7 +36,8 @@ function App(props) {
     MouseX: 0,
     MouseY: 0,
     AccessCode: false,
-    LoginPrompt: true
+    LoginPrompt: true,
+    ADdCustomNode:false
   })
 
   const [userData, setUserData] = useState({})

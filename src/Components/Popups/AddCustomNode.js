@@ -1,7 +1,7 @@
 import React, { useState, useContext, useRef } from 'react'
 import { Dialog, TextField, Button, DialogActions, Divider } from '@material-ui/core'
 import { Publish, SentimentSatisfiedOutlined } from '@material-ui/icons'
-import { PopupManager } from '../../Context/PopupManager'
+import { PopupManager, setPopupState } from '../../Context/PopupManager'
 import { AppDataManager } from '../../Context/AppDataManager'
 import { UserManager } from '../../Context/userManager'
 import RESOURCES from '../../Resources/resources'
@@ -41,7 +41,7 @@ export default function AddCustomNode() {
     }
 
     return (
-        <Dialog open={false} fullWidth maxWidth='sm'>
+        <Dialog fullWidth maxWidth='sm' open={popups.AddCustomNode} onClose={()=>setPopups(setPopupState('AddCustomNode', false, popups))}>
             <div style={{ padding: '10vh' }}>
                 <div style={{ width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'space-around' }}>
                     <div style={{ position: 'absolute', width: '10px', height: '30%', background: '#d2d2d2', zIndex: '0', top: 0 }}></div>
@@ -65,7 +65,7 @@ export default function AddCustomNode() {
             <Divider />
             <DialogActions>
                 <div style={{ display: 'flex' }}>
-                    <Button>Cancel</Button>
+                    <Button onClick={()=>setPopups(setPopupState('AddCustomNode', false, popups))}>Cancel</Button>
                     <Button onClick={Submit}>Save</Button>
                 </div>
             </DialogActions>
