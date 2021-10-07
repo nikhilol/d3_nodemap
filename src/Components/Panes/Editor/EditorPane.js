@@ -59,12 +59,22 @@ export default function EditorPane(props) {
                     matcher: href => href.match(/vimeo.com\//i),
                     href: href => href,
                     component: Vimeo
+                },
+                {
+                    title: "Vimeo",
+                    keywords: "Vimeo",
+                    defaultHidden: false,
+                    matcher: href => href.match(/loom.com\//i),
+                    href: href => href,
+                    component: Loom
                 }
             ]}
         >
         </Editor>
     )
 }
+
+//https://www.loom.com/share/e174e2b8d355489aa75d7e8030e18aa9
 
 const Youtube = (props) => {
     return (
@@ -86,6 +96,23 @@ const Vimeo = (props) => {
         <div style={{ display: 'flex', justifyContent: 'center' }}>
             <iframe style={{ height: '32vh', padding: '0', margin: 0 }} title='video'
                 src={props.attrs.href.replace('vimeo', 'player.vimeo').replace('.com', '.com/video')}
+                allowfullscreen="allowfullscreen"
+                mozallowfullscreen="mozallowfullscreen"
+                msallowfullscreen="msallowfullscreen"
+                oallowfullscreen="oallowfullscreen"
+                webkitallowfullscreen="webkitallowfullscreen"
+                frameBorder="0" 
+                >
+            </iframe>
+        </div>
+    )
+}
+
+const Loom = (props) => {
+    return (
+        <div style={{height: '32vh', display: 'flex', justifyContent: 'center' }}>
+            <iframe style={{  padding: '0', margin: 0 }} title='video'
+                src={props.attrs.href.replace('share', 'embed')}
                 allowfullscreen="allowfullscreen"
                 mozallowfullscreen="mozallowfullscreen"
                 msallowfullscreen="msallowfullscreen"
