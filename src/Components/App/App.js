@@ -70,7 +70,6 @@ function App(props) {
   //save when data changes
   useEffect(() => {
     if (appData.Data) {
-      console.log('NODES', appData.Data)
       if (appData.Data) {
         Save();
       }
@@ -80,7 +79,6 @@ function App(props) {
   //markdown timeout
   useEffect(() => {
     const delayDebounceFn = setTimeout(() => {
-      console.log(appData.MdValue)
       Save();
     }, 2000)
 
@@ -91,7 +89,6 @@ function App(props) {
   useEffect(async () => {
     let _plans = []
     await axios.get(`${RESOURCES.apiURL}/plans?user=${props.userID}`).then(plans => {
-      console.log(plans.data)
       if (props.userID && !props.plan && plans.data.length) {
         window.location.assign(`/plan/${props.userID}/${plans.data[0]}`)
       }
@@ -99,18 +96,16 @@ function App(props) {
       setAppData(setDataState('Plans', _plans, appData))
     })
     await axios.get(`${RESOURCES.apiURL}/privacy?user=${props.userID}&title=${props.plan}`).then(data=>{
-      console.log(data)
       if(data.data){
         //it is private
         //open popup
         setPopups(setPopupState("AccessCode", true, popups))
       } else{
         //not private
-        console.log('HIT')
         getNodeData(_plans)
       }
     })
-  }, [props])
+  }, [props, props.plan])
 
   async function getNodeData(_plans){
     await axios.get(`${RESOURCES.apiURL}/plans/nodes?user=${props.userID}&title=${props.plan}`).then(data => {
@@ -123,7 +118,6 @@ function App(props) {
   //update a node property helper function
   function updateNodeData(nodeId, property, newValue) {
     let temp = { ...appData.Data }
-    console.log('test', temp.nodes)
     for (let key in temp.nodes) {
       if (temp.nodes[key].id === nodeId) {
         //if new value is a bool return the opposite of this value
@@ -133,11 +127,9 @@ function App(props) {
           updateLinkColour(nodeId, temp.nodes[key][property])
         }
         else { temp.nodes[key][property] = newValue }
-        console.log(`Updating ${nodeId}'s property ${property} to ${newValue}`)
       }
     }
     setAppData(setDataState('Data', { ...temp }, appData))
-    console.log(temp)
   };
 
   function updateLinkColour(nodeId, isComplete) {
@@ -148,19 +140,17 @@ function App(props) {
       }
     }
     setAppData(setDataState('Data', { ...temp }, appData))
-    console.log(temp)
   };
 
   //save plan data to firebase
   function Save() {
-    console.log('saving')
+    console.log(`saving ${props.plan} as current: ${appData.CurrentPlan}`)
     if (appData.Data && !appData.IsDemo && userData.displayName) {
       axios({
         method: 'post',
-        url: `${RESOURCES.apiURL}/plans/update?user=${userData.displayName}&title=${appData.CurrentPlan}`,
+        url: `${RESOURCES.apiURL}/plans/update?user=${userData.displayName}&title=${props.plan}`,
         data: appData.Data
       }).then(res => {
-        console.log(res.data);
       });
     }
   }
@@ -233,7 +223,7 @@ function App(props) {
       <AppDataManager.Provider value={{ appData, setAppData }}>
         <PopupManager.Provider value={{ popups, setPopups }}>
           <div style={{ margin: 0, padding: 0 }} className='App'>
-            <Nav/>
+            <Nav plan={props.plan}/>
             <RegisterModal/>
             <Modal hideBackdrop open={!appData.Data.nodes} style={{background:'#F7F6F3', display: 'flex', justifyContent: 'center', alignItems: 'center' }}><CircularProgress style={{ width: '5vw', height: '5vw', outline: 'none' }}></CircularProgress></Modal>
             {appData.Data && appData.Data.nodes &&
@@ -254,7 +244,7 @@ function App(props) {
               </>
             }
           </div>
-          <AccessCode getNodes={getNodeData}></AccessCode>
+          <AccessCode getNodes={getNodeData} plan={props.plan}></AccessCode>
         </PopupManager.Provider>
       </AppDataManager.Provider>
     </UserManager.Provider>

@@ -15,7 +15,7 @@ export default function AccessCode(props){
     const [error, setError] =  useState(false)
 
     async function Submit(){
-        var result = await axios.post(`${RESOURCES.apiURL}/privacy?user=${appData.UserIDRoute}&title=${appData.CurrentPlan}&password=${text}`)
+        var result = await axios.post(`${RESOURCES.apiURL}/privacy?user=${appData.UserIDRoute}&title=${props.plan}&password=${text}`)
         if(result.data === true){
             setPopups(setPopupState('AccessCode', false, popups))
             props.getNodes(appData.Plans)

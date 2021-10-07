@@ -7,7 +7,6 @@ export default function GraphPane(props) {
 
 	//node completion handler
 	function onClickNode(node) {
-		console.log(node);
 		props.updateNodeData(node, "IsComplete", "BOOL");
 	}
 

@@ -5,6 +5,7 @@ import RESOURCES from '../../Resources/resources'
 import { AppDataManager } from '../../Context/AppDataManager'
 import { ExpandMore } from '@material-ui/icons'
 import { PopupManager, setPopupState } from '../../Context/PopupManager'
+import { UserManager } from '../../Context/userManager'
 
 const axios = require('axios')
 
@@ -14,15 +15,16 @@ export default function NewPlanSearchSelector(props) {
     const [customNodes, setCustomNodes] = useState(null)
 
     const { appData } = useContext(AppDataManager)
+    const {userData} = useContext(UserManager)
     const {popups, setPopups} = useContext(PopupManager)
 
     useEffect(() => {
         getData()
-    }, [])
+    }, [popups])
 
     async function getData() {
         // var result = await axios.get(`${RESOURCES.apiURL}/nodes/custom?user=${appData.UserIDRoute}`)
-        var result = await axios.get(`${RESOURCES.apiURL}/nodes/custom?user=Nodemap`)
+        var result = await axios.get(`${RESOURCES.apiURL}/nodes/custom?user=${userData.displayName}`)
         console.log(result.data)
         setCustomNodes(result.data)
     }

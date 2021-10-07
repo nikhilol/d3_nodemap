@@ -22,7 +22,7 @@ export default function Nav(props) {
 
     return (
         <nav style={{ height: '5vh', background: '#2b2b2b', borderBottom: '1px solid #e5e5e5', display: 'flex', justifyContent: 'center', alignItems: 'center' }} className="App">
-            <h2 style={{ cursor: 'pointer', position: 'relative', color: '#F7F6F3', display: 'flex', alignItems: 'center', fontWeight: 'lighter' }} onClick={() => setPopups(setPopupState('PlanSelector', true, popups))}>{appData.CurrentPlan}<ExpandMore id='planTitle'></ExpandMore></h2>
+            <h2 style={{ cursor: 'pointer', position: 'relative', color: '#F7F6F3', display: 'flex', alignItems: 'center', fontWeight: 'lighter' }} onClick={() => setPopups(setPopupState('PlanSelector', true, popups))}>{props.plan}<ExpandMore id='planTitle'></ExpandMore></h2>
             {userData.displayName ?
                 <Button style={{ background: '#ff6666', color: 'white', position: 'absolute', right: '1vh' }} onClick={logoutHandler}>Log out</Button>
                 :
