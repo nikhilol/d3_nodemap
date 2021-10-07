@@ -15,7 +15,7 @@ export default function AddCustomNode() {
     const [file, setFile] = useState(null)
     const [preview, setPreview] = useState(null)
     const [title, setTitle] = useState(null)
-    const [urlError, setUrlError] = useState(false)
+    const [fileError, setFileError] = useState(false)
     const [titleError, setTitleError] = useState(false)
 
     const { popups, setPopups } = useContext(PopupManager)
@@ -24,37 +24,42 @@ export default function AddCustomNode() {
     const fileInput = React.useRef();
 
     function Submit() {
-        var uploadTask = firebase.default.storage().ref().child(userData.displayName + '/' + title).put(file)
-        uploadTask.on('state_changed',
-            (snapshot) => {
-            },
-            (error) => {
-            },
-            () => {
-                uploadTask.snapshot.ref.getDownloadURL().then(async (downloadURL) => {
-                    if(downloadURL){
-                        let res = await axios.post(`${RESOURCES.apiURL}/nodes/custom?user=${userData.displayName}&title=${title}&imgUrl=${ encodeURI(downloadURL + '?alt=media')}`)
-                        console.log(res)
-                        if(res.status == 200){
-                            setPopups(setPopupState('AddCustomNode', false, popups))
+        if (file && title) {
+            var uploadTask = firebase.default.storage().ref().child(userData.displayName + '/' + title).put(file)
+            uploadTask.on('state_changed',
+                (snapshot) => {
+                },
+                (error) => {
+                },
+                () => {
+                    uploadTask.snapshot.ref.getDownloadURL().then(async (downloadURL) => {
+                        if (downloadURL) {
+                            let res = await axios.post(`${RESOURCES.apiURL}/nodes/custom?user=${userData.displayName}&title=${title}&imgUrl=${encodeURI(downloadURL + '?alt=media')}`)
+                            console.log(res)
+                            if (res.status == 200) {
+                                setPopups(setPopupState('AddCustomNode', false, popups))
+                            }
                         }
-                    }
-                });
-            }
-        )
+                    });
+                }
+            )
+        } else {
+            !file && setFileError(true)
+            !title && setTitleError(true);
+        }
     }
 
     return (
-        <Dialog fullWidth maxWidth='sm' open={popups.AddCustomNode} onClose={()=>setPopups(setPopupState('AddCustomNode', false, popups))}>
+        <Dialog fullWidth maxWidth='sm' open={popups.AddCustomNode} onClose={() => setPopups(setPopupState('AddCustomNode', false, popups))}>
             <div style={{ padding: '10vh' }}>
                 <div style={{ width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'space-around' }}>
                     <div style={{ position: 'absolute', width: '10px', height: '30%', background: '#d2d2d2', zIndex: '0', top: 0 }}></div>
                     {preview ?
                         <img alt={'Nodemap' + title} style={{ zIndex: '3', maxHeight: '10vw', width: '10vw', height: '10vw', borderRadius: '50%', transition: '0.5s', transformOrigin: 'center', transitionDelay: '0.1s', border: '10px solid transparent' }} src={preview}></img>
                         :
-                        <div style={{ zIndex: '3', background: 'white', maxHeight: '10vw', width: '10vw', height: '10vw', borderRadius: '50%', transition: '0.5s', transformOrigin: 'center', transitionDelay: '0.1s', border: urlError ? '4px dashed red' : '4px dashed #D2D2D2', textAlign: 'center', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', fontSize: '10vh', color: '#D2D2D2' }}><Publish /></div>
+                        <div style={{ zIndex: '3', background: 'white', maxHeight: '10vw', width: '10vw', height: '10vw', borderRadius: '50%', transition: '0.5s', transformOrigin: 'center', transitionDelay: '0.1s', border: fileError ? '4px dashed red' : '4px dashed #D2D2D2', textAlign: 'center', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', fontSize: '10vh', color: '#D2D2D2' }}><Publish /></div>
                     }
-                    <div style={{ marginTop: '5vh' }}>
+                    <div style={{ marginTop: '5vh', width:'80%' }}>
                         <input
                             ref={fileInput}
                             type="file"
@@ -62,6 +67,7 @@ export default function AddCustomNode() {
                             onChange={(e) => { setFile(e.target.files[0]); setPreview(URL.createObjectURL(e.target.files[0])) }}
                         />
                         <Button style={{ width: '100%', background: '#6930C3', color: 'white' }} onClick={() => fileInput.current.click()}>Choose node image</Button>
+                        <div style={{textAlign:'center', fontSize:'small'}}>Square images work best!</div>
                         <TextField style={{ background: 'white', marginTop: '3vh' }} error={titleError} variant='outlined' placeholder='Node title' fullWidth size='small' onChange={(e) => { setTitle(e.target.value); setTitleError(false) }}></TextField>
                     </div>
                 </div>
@@ -69,7 +75,7 @@ export default function AddCustomNode() {
             <Divider />
             <DialogActions>
                 <div style={{ display: 'flex' }}>
-                    <Button onClick={()=>setPopups(setPopupState('AddCustomNode', false, popups))}>Cancel</Button>
+                    <Button onClick={() => setPopups(setPopupState('AddCustomNode', false, popups))}>Cancel</Button>
                     <Button onClick={Submit}>Save</Button>
                 </div>
             </DialogActions>
