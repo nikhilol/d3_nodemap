@@ -31,7 +31,9 @@ export default function Nav(props) {
                     :
                     <Button id='LoginButton' style={{ background: '#6930C3', color: 'white', position: 'absolute', right: '1vh' }} onClick={() => window.location.assign('/login')}>Log in</Button>
             }
-            <LoginPrompt></LoginPrompt>
+            {!userData &&
+                <LoginPrompt></LoginPrompt>
+            }
         </nav>
     )
 }

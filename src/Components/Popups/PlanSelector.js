@@ -28,11 +28,14 @@ function PlanSelector(props) {
                     {
                         appData.Plans.map(_plan => {
                             return (
-                                <Link style={{ width: '100%', height: '100%', colour: 'black' }} to={`/plan/${appData.UserIDRoute}/${encodeURI(_plan)}`}>
-                                    <MenuItem value={appData.Plans.indexOf(_plan)} onClick={()=>setPopups(setPopupState('PlanSelector', false, popups))}>
-                                        {_plan}
-                                    </MenuItem>
-                                </Link>
+                                // <Link style={{ width: '100%', height: '100%', colour: 'black' }} to={`/plan/${appData.UserIDRoute}/${encodeURI(_plan)}`}>
+                                //     <MenuItem value={appData.Plans.indexOf(_plan)} onClick={()=>setPopups(setPopupState('PlanSelector', false, popups))}>
+                                //         {_plan}
+                                //     </MenuItem>
+                                // </Link>
+                                <MenuItem value={appData.Plans.indexOf(_plan)} onClick={()=>window.location.assign(`/plan/${appData.UserIDRoute}/${encodeURI(_plan)}`)}>
+                                {_plan}
+                                </MenuItem>
                             )
                         })
                     }
