@@ -5,7 +5,7 @@ import RESOURCES from '../../Resources/resources'
 
 const axios = require('axios')
 const firebase = require('firebase')
-// const mixpanel = require('mixpanel-browser')
+const amplitude = require('amplitude-js')
 
 export function Signup() {
     useEffect(() => {
@@ -22,6 +22,7 @@ export function Signup() {
                 const res = await axios.post(`${RESOURCES.apiURL}/signup?Email=${document.getElementById('Email').value}&Username=${document.getElementById('Username').value}&Password=${document.getElementById('Password').value}`)
                 await firebase.default.auth().signInWithEmailAndPassword(document.getElementById('Email').value, document.getElementById('Password').value);
                 await firebase.default.auth().setPersistence(firebase.default.auth.Auth.Persistence.LOCAL)
+                amplitude.getInstance().logEvent('NEW_SIGNUP');
                 window.location.assign(`/plan/${firebase.default.auth().currentUser.displayName}`)
             } catch (e) {
                 console.log(e)

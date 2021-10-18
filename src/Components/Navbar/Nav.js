@@ -8,6 +8,7 @@ import { UserManager } from "../../Context/userManager";
 import LoginPrompt from "../Popups/LoginPrompt";
 
 const firebase = require('firebase').default
+const amplitude = require('amplitude-js')
 
 export default function Nav(props) {
 
@@ -27,7 +28,7 @@ export default function Nav(props) {
                 <Button style={{ background: '#ff6666', color: 'white', position: 'absolute', right: '1vh' }} onClick={logoutHandler}>Log out</Button>
                 :
                 appData.IsDemo ?
-                    <Button style={{ background: '#6930C3', color: 'white', position: 'absolute', right: '1vh' }} onClick={() => window.location.assign('/signup')}>Sign up</Button>
+                    <Button style={{ background: '#6930C3', color: 'white', position: 'absolute', right: '1vh' }} onClick={() => {amplitude.getInstance().logEvent('DEMO_CONVERSION'); window.location.assign('/signup')}}>Sign up</Button>
                     :
                     <Button id='LoginButton' style={{ background: '#6930C3', color: 'white', position: 'absolute', right: '1vh' }} onClick={() => window.location.assign('/login')}>Log in</Button>
             }

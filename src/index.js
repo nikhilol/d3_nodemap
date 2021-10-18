@@ -7,6 +7,7 @@ import reportWebVitals from './reportWebVitals';
 import { BrowserRouter as Router, Switch, Route, useParams, withRouter } from 'react-router-dom';
 import Signup from './Components/Auth/Signup';
 const firebase = require('firebase').default
+const amplitude = require('amplitude-js')
 
 const app = firebase.initializeApp({
   apiKey: "AIzaSyCUzsoeXiMaMNekQnH-nK8pZkvcmfttVSI",
@@ -17,6 +18,8 @@ const app = firebase.initializeApp({
   appId: "1:1066002610989:web:6136fbcaf16554fb4031a4",
   measurementId: "G-6NN3D93WVH",
 })
+
+amplitude.getInstance().init("318d9a5562d118d25c43febfbb677fbc");
 
 
 ReactDOM.render(

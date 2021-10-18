@@ -5,6 +5,9 @@ import { PopupManager, setPopupState } from '../../Context/PopupManager'
 import { UserManager } from '../../Context/userManager'
 import { AppDataManager } from '../../Context/AppDataManager'
 
+const amplitude = require('amplitude-js')
+
+
 const axios = require('axios')
 const firebase = require('firebase').default
 
@@ -19,6 +22,7 @@ export default function AddNewPlanPopup(props) {
     async function Add() {
         let res = await axios.post(`${RESOURCES.apiURL}/plans?user=${userData.displayName}&title=${addValue}`)
         if(res.status === 200){
+            amplitude.getInstance().logEvent('NEW_PLAN_ADDED');
             window.location.assign(`/plan/${userData.displayName}/${addValue}`)
         } else alert('There was a problem adding this plan!')
     }

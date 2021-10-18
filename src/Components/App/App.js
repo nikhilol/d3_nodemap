@@ -22,6 +22,7 @@ import AddCustomNode from '../Popups/AddCustomNode';
 
 const axios = require('axios').default
 const firebase = require("firebase").default
+const amplitude = require('amplitude-js')
 
 
 function App(props) {
@@ -37,7 +38,7 @@ function App(props) {
     MouseY: 0,
     AccessCode: false,
     LoginPrompt: true,
-    ADdCustomNode:false
+    AddCustomNode:false
   })
 
   const [userData, setUserData] = useState({})
@@ -52,9 +53,18 @@ function App(props) {
     ActiveNode: {}
   })
 
+  useEffect(()=>{
+    props.demo && amplitude.getInstance().logEvent('DEMO_LOADED');
+  },[]) 
+
   firebase.auth().onAuthStateChanged((user) => {
     if (user) {
       setUserData(user)
+      amplitude.getInstance().setUserId(user.uid);
+      amplitude.getInstance().setUserProperties({
+        Username: user.displayName,
+        Email: user.email
+      });
       if (!props.userID) {
         window.location.assign('/plan/' + user.displayName)
       } else if(props.userID !== user.displayName ){
@@ -99,6 +109,7 @@ function App(props) {
       if(data.data){
         //it is private
         //open popup
+        amplitude.getInstance().logEvent('PRIVATE_NODEMAP_VIEW');
         setPopups(setPopupState("AccessCode", true, popups))
       } else{
         //not private
@@ -110,6 +121,7 @@ function App(props) {
   async function getNodeData(_plans){
     await axios.get(`${RESOURCES.apiURL}/plans/nodes?user=${props.userID}&title=${props.plan}`).then(data => {
       if (data.data) {
+          amplitude.getInstance().logEvent('NODEMAP_VIEW');
           setAppData(setMultiDataState({ Data: { ...data.data.nodes }, Plans: _plans, ActiveNode: data.data.nodes.nodes[0] }, appData))
         }
       })
@@ -137,6 +149,7 @@ function App(props) {
     for (let key in temp.links) {
       if (temp.links[key].target === nodeId) {
         temp.links[key].color = isComplete ? '#72EFDD' : '#D2D2D2';
+        amplitude.getInstance().logEvent('NODE_COMPLETED');
       }
     }
     setAppData(setDataState('Data', { ...temp }, appData))

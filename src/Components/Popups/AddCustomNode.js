@@ -9,6 +9,7 @@ import RESOURCES from '../../Resources/resources'
 
 const firebase = require('firebase')
 const axios = require('axios')
+const amplitude = require('amplitude-js')
 
 export default function AddCustomNode() {
 
@@ -37,6 +38,7 @@ export default function AddCustomNode() {
                             let res = await axios.post(`${RESOURCES.apiURL}/nodes/custom?user=${userData.displayName}&title=${title}&imgUrl=${encodeURI(downloadURL + '?alt=media')}`)
                             console.log(res)
                             if (res.status == 200) {
+                                amplitude.getInstance().logEvent('CUSTOM_NODE_ADDED');
                                 setPopups(setPopupState('AddCustomNode', false, popups))
                             }
                         }

@@ -6,6 +6,8 @@ import LoginPrompt2 from '../../Images/LoginPrompt2.svg'
 import LoginPrompt3 from '../../Images/LoginPrompt3.svg'
 import { Close } from '@material-ui/icons'
 
+const amplitude = require('amplitude-js')
+
 export default function LoginPrompt(){
 
     const {popups, setPopups} = useContext(PopupManager)
@@ -41,7 +43,7 @@ export default function LoginPrompt(){
                     </Paper>
                     <Button style={{position:'absolute', top:0, right:'0'}} onClick={()=>setPopups(setPopupState('LoginPrompt', false, popups))}><Close></Close></Button>
                 </div>
-                <Button style={{width:'30%', background:'#6930c3', color:'white'}} onClick={()=>window.location.assign('/login')}>Log in</Button>
+                <Button style={{width:'30%', background:'#6930c3', color:'white'}} onClick={()=>{amplitude.getInstance().logEvent('LOGIN_PROMPT_SUCCESS'); window.location.assign('/login')}}>Log in</Button>
             </div>
         </Dialog>
     )
