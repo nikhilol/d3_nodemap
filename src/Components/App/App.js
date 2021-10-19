@@ -149,7 +149,7 @@ function App(props) {
     for (let key in temp.links) {
       if (temp.links[key].target === nodeId) {
         temp.links[key].color = isComplete ? '#72EFDD' : '#D2D2D2';
-        amplitude.getInstance().logEvent('NODE_COMPLETED');
+        isComplete && amplitude.getInstance().logEvent('NODE_COMPLETED');
       }
     }
     setAppData(setDataState('Data', { ...temp }, appData))

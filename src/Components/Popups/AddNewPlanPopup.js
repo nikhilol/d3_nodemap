@@ -33,6 +33,7 @@ export default function AddNewPlanPopup(props) {
         let creator = split[split.length - 2];
         let res = await axios.post(`${RESOURCES.apiURL}/plans/import?user=${userData.displayName}&creator=${creator}&plan=${plan}`)
         if(res.status === 200){
+            amplitude.getInstance().logEvent('NEW_PLAN_IMPORTED');
             window.location.assign(`/plan/${userData.displayName}/${plan}`)
         } else alert('There was a problem adding this plan!')
     }
