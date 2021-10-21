@@ -7,7 +7,7 @@ import { ExpandMore } from '@material-ui/icons'
 import { PopupManager, setPopupState } from '../../Context/PopupManager'
 import { UserManager } from '../../Context/userManager'
 
-const axios = require('axios')
+const axios = require('axios').default
 
 export default function NewPlanSearchSelector(props) {
 

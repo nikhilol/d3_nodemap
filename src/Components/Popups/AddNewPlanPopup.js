@@ -8,7 +8,7 @@ import { AppDataManager } from '../../Context/AppDataManager'
 const amplitude = require('amplitude-js')
 
 
-const axios = require('axios')
+const axios = require('axios').default
 const firebase = require('firebase').default
 
 export default function AddNewPlanPopup(props) {

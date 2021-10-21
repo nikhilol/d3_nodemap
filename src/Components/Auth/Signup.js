@@ -3,7 +3,7 @@ import Logo from '../../Images/LogoVertical.svg'
 import { TextField, Button } from '@material-ui/core'
 import RESOURCES from '../../Resources/resources'
 
-const axios = require('axios')
+const axios = require('axios').default
 const firebase = require('firebase')
 const amplitude = require('amplitude-js')
 

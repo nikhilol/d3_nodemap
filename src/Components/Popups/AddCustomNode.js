@@ -8,7 +8,7 @@ import RESOURCES from '../../Resources/resources'
 
 
 const firebase = require('firebase')
-const axios = require('axios')
+const axios = require('axios').default
 const amplitude = require('amplitude-js')
 
 export default function AddCustomNode() {
