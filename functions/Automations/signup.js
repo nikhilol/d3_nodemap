@@ -23,9 +23,9 @@ exports.signup = functions.auth.user().onCreate(async (user) => {
                 ],
             },
             "Account Type": {
-                select: {
+                "multi_select": [{
                     name: "User",
-                },
+                }],
             },
             "Email": {
                 email: user.email,
