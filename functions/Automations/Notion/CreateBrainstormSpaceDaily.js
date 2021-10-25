@@ -8,7 +8,7 @@ const notion = new Client({ auth: "secret_qFHmY8UZ0H1RsexDyedFHicyeSZ41Q0CVYnL9q
 
 exports.createBrainstormSpaceDaily = functions.pubsub.schedule("1 0 * * *").timeZone("Europe/London").onRun((context) => {
     const blockId = "103af17d47e647a3bc9b5aa3c6e7b24e";
-    const date = new Date().toLocaleDateString();
+    const date = new Date().toDateString();
     notion.blocks.children.append({
         block_id: blockId,
         children: [
