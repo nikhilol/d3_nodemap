@@ -122,7 +122,8 @@ function App(props) {
     await axios.get(`${RESOURCES.apiURL}/plans/nodes?user=${props.userID}&title=${props.plan}`).then(data => {
       if (data.data) {
           amplitude.getInstance().logEvent('NODEMAP_VIEW');
-          setAppData(setMultiDataState({ Data: { ...data.data.nodes }, Plans: _plans, ActiveNode: data.data.nodes.nodes[0] }, appData))
+          console.log('FIRST_NODE:' + JSON.stringify(data.data.nodes.nodes[0]))
+          setAppData(setMultiDataState({ Data: { ...data.data.nodes }, Plans: _plans, ActiveNode: {...data.data.nodes.nodes[0]} }, appData))
         }
       })
   }

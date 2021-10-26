@@ -48,7 +48,7 @@ export default function EditorPane(props) {
                     title: "Youtube",
                     keywords: "youtube",
                     defaultHidden: false,
-                    matcher: href => href.match(/youtube.com\/embed\//i),
+                    matcher: href => href.match(/youtube.com\//i),
                     href: href => href,
                     component: Youtube
                 },
@@ -74,13 +74,16 @@ export default function EditorPane(props) {
     )
 }
 
-//https://www.loom.com/share/e174e2b8d355489aa75d7e8030e18aa9
-
 const Youtube = (props) => {
+    let str = props.attrs.href
+    if(str.includes('watch?v=')){
+        str = str.replace('watch?v=', 'embed/')
+        console.log(str)
+    }
     return (
         <div style={{ display: 'flex', justifyContent: 'center' }}>
             <iframe style={{ height: '32vh', padding: '0', margin: 0 }} title='video'
-                src={props.attrs.href}
+                src={str}
                 allowfullscreen="allowfullscreen"
                 mozallowfullscreen="mozallowfullscreen"
                 msallowfullscreen="msallowfullscreen"
