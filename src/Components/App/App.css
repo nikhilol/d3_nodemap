@@ -1,5 +1,3 @@
-* {}
-
 .App {
   text-align: center;
 }
@@ -73,9 +71,9 @@ g .node image:hover {
   line-height: 2em !important;
 }
 
-:not(.sc-hHEiqL p, .sc-hHEiqL strong, .sc-hHEiqL em, .sc-hHEiqL del, .Login *) {
+/* :not(.sc-hHEiqL p, .sc-hHEiqL strong, .sc-hHEiqL em, .sc-hHEiqL del, .Login *) {
   font-family: 'Permanent Marker' !important;
-}
+} */
 
 .sc-hHEiqL p, .sc-hHEiqL strong, .sc-hHEiqL em, .sc-hHEiqL del, .Login * {
   font-family: 'Poppins' !important;

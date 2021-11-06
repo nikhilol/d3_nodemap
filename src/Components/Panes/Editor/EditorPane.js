@@ -11,6 +11,9 @@ export default function EditorPane(props) {
     const { appData, setAppData } = useContext(AppDataManager)
     const { userData } = useContext(UserManager)
 
+    console.log(appData.UserIDRoute)
+
+
     async function uploadImage(file) {
         try {
             let ref = firebase.storage().ref().child(userData[0] ? userData.displayName : 'userData.displayName/' + file.name)
@@ -36,7 +39,7 @@ export default function EditorPane(props) {
 
     return (
         <Editor
-            readOnly={userData.displayName !== appData.UserIDRoute}
+            readOnly={appData.UserIDRoute !== 'Demo1' && (userData.displayName !== appData.UserIDRoute)}
             readOnlyWriteCheckboxes={true}
             style={{ width: '100%', height: '100%', textAlign: 'left', background: '#FFF', borderRight: '1px solid #d2d3d4' }}
             value={appData.ActiveNode ? appData.ActiveNode.md : 'test'}
